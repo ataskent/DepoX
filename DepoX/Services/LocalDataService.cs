@@ -37,5 +37,21 @@ namespace DepoX.Services
         public Task<int> UpdateStockAsync(StockItem item)
             => _db.UpdateAsync(item);
 
+        public Task<List<StockTransaction>> GetPendingTransactionsAsync(CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task MarkAsSentAsync(Guid transactionId, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task MarkAsFailedAsync(Guid transactionId, string error, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }

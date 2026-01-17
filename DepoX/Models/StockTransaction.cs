@@ -8,6 +8,13 @@ using SQLite;
 
 namespace DepoX.Models
 {
+    public enum TransactionStatus
+    {
+        Pending = 0,
+        Sent = 1,
+        Failed = 2
+    }
+
     public class StockTransaction
     {
         [PrimaryKey]
@@ -19,5 +26,9 @@ namespace DepoX.Models
         public string OperationType { get; set; } // "TRANSFER", "COUNT", "SHIPMENT"
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         public bool Synced { get; set; } = false;
+
+        public TransactionStatus Status { get; set; } = TransactionStatus.Pending;
+        public string? ErrorMessage { get; set; }
+
     }
 }
