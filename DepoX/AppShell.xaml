@@ -1,0 +1,17 @@
+<Shell
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:DepoX.Views"
+    x:Class="DepoX.AppShell">
+
+    <!-- ToolbarItem: global butonlar -->
+    <Shell.ToolbarItems>
+        <ToolbarItem Text="☰ Menü" Clicked="OnMenuClicked"/>
+        <ToolbarItem Text="⚙️ Seçenekler" Clicked="OnOptionsClicked"/>
+    </Shell.ToolbarItems>
+
+    <!-- Ana içerik -->
+    <ShellContent Title="Menü"
+                  ContentTemplate="{DataTemplate views:MenuPopup}"
+                  Route="MenuPopup"/>
+</Shell>

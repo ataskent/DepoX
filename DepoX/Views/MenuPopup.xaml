@@ -1,0 +1,14 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DepoX.Views.MenuPopup"
+             Title="📦 DepoX Menü">
+
+    <VerticalStackLayout Padding="30" Spacing="20"
+                         VerticalOptions="Center"
+                         HorizontalOptions="Center">
+        <Label Text="DepoX Menü" FontSize="24" FontAttributes="Bold" />
+        <Button Text="Depolar Arası Transfer" Clicked="OnTransferClicked"/>
+        <Button Text="Depo Sayım" Clicked="OnCountClicked"/>
+        <Button Text="Mal Sevk" Clicked="OnShipmentClicked"/>
+    </VerticalStackLayout>
+</ContentPage>
