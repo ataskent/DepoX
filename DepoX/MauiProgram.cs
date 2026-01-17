@@ -25,13 +25,14 @@ namespace DepoX
 				return new Services.LocalDataService(dbPath);
 			});
 
-			// Network client (ileride SOAP'a dönecek)
-			builder.Services.AddSingleton(new HttpClient());
-			builder.Services.AddSingleton<Services.SyncService>();
-			builder.Services.AddSingleton<Services.BarcodeScannerService>();
+            // Network client (ileride SOAP'a dönecek)
+            builder.Services.AddSingleton(new HttpClient());
+            builder.Services.AddSingleton<Services.Erp.IErpGateway, Services.Erp.SoapErpGateway>();
+            builder.Services.AddSingleton<Services.SyncService>();
+            builder.Services.AddSingleton<Services.BarcodeScannerService>();
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
