@@ -72,12 +72,13 @@
 //    }
 //}
 
+using DepoX.Dtos;
 using DepoX.Models;
+using DepoX.Services.Count;
 using DepoX.ViewModels;
-using System.Text.Json;
-
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 
 namespace DepoX.Views;
 
@@ -85,9 +86,12 @@ public partial class CountPage : ContentPage
 {
     public CountViewModel VM => BindingContext as CountViewModel;
 
-    public CountPage()
+    private readonly ICountService _countService;
+
+    public CountPage(ICountService countService)
     {
         InitializeComponent();
+        _countService = countService;
     }
 
     private void OnBarcodeEntered(object sender, EventArgs e)
@@ -154,50 +158,30 @@ public partial class CountPage : ContentPage
             return;
         }
 
-        // 🔴 SERVER'A GİDECEK EN BASİT SEPET
-        var draft = new
+
+        var draft = new CountDraftDto
         {
             ClientDraftId = Guid.NewGuid().ToString(),
-            BasketId = "",                // boş → server yeni sepet açacak
             WorkplaceCode = "01",
-            Items = VM.CountItems.Select(x => new
+            Items = VM.CountItems.Select(x => new CountDraftItemDto
             {
                 Barcode = x.Barcode,
-                StockCode = "",            // şimdilik boş
-                Quantity = (decimal)x.Quantity,
-                FromWarehouseCode = "",    // şimdilik boş
+                Quantity = x.Quantity,
+                StockCode = "",
+                FromWarehouseCode = "",
                 LocationCode = ""
-            }).ToArray()
+            }).ToList()
         };
 
         try
         {
-            var json = JsonSerializer.Serialize(new { draft });
-
-            var content = new StringContent(
-                json,
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            // ⚠️ DİKKAT: asmx DOSYA yolu
-            var url = "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveBasket";
-
-            using var client = new HttpClient();
-            var response = await client.PostAsync(url, content);
-            var resultText = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                await DisplayAlert("Servis Hata", resultText, "Tamam");
-                return;
-            }
-
-            await DisplayAlert("OK", "Barkodlar Uyumsoft’a gönderildi.", "Tamam");
+            await _countService.SaveDraftAsync(draft);
+            await DisplayAlert("OK", "Barkodlar ERP'ye gönderildi.", "Tamam");
         }
         catch (Exception ex)
         {
             await DisplayAlert("Hata", ex.Message, "Tamam");
         }
     }
+
 }

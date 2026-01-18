@@ -1,21 +1,17 @@
-﻿using DepoX.Services.Erp;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace DepoX.Services;
+﻿using DepoX.Services;
+using DepoX.Services.Erp;
 
 public class SyncCoordinator
 {
     private readonly LocalDataService _localData;
-    private readonly IErpGateway _erpGateway;
+    private readonly IErpCommitGateway _commitGateway;
 
     public SyncCoordinator(
         LocalDataService localData,
-        IErpGateway erpGateway)
+        IErpCommitGateway commitGateway)
     {
         _localData = localData;
-        _erpGateway = erpGateway;
+        _commitGateway = commitGateway;
     }
 
     public async Task<SyncResult> CommitAsync(
@@ -28,7 +24,8 @@ public class SyncCoordinator
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await _erpGateway.CommitAsync(tx, cancellationToken);
+            var result =
+                await _commitGateway.CommitAsync(tx, cancellationToken);
 
             if (result.Success)
             {
@@ -38,7 +35,7 @@ public class SyncCoordinator
             {
                 await _localData.MarkAsFailedAsync(
                     tx.Id,
-                    result.ErrorMessage ?? "Unknown ERP error",
+                    result.Message ?? "Unknown ERP error",
                     cancellationToken);
             }
         }

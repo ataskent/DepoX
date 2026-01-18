@@ -1,18 +1,25 @@
-﻿namespace DepoX.Services.Erp
+﻿public class ErpResult
 {
-    public class ErpResult
+    public bool Success { get; private set; }
+    public string Message { get; private set; }
+    public string ReferenceId { get; private set; }
+
+    public static ErpResult Ok(string message, string referenceId = null)
     {
-        public bool Success { get; }
-        public string? ErrorMessage { get; }
-
-        private ErpResult(bool success, string? errorMessage)
+        return new ErpResult
         {
-            Success = success;
-            ErrorMessage = errorMessage;
-        }
+            Success = true,
+            Message = message,
+            ReferenceId = referenceId
+        };
+    }
 
-        public static ErpResult Ok() => new ErpResult(true, null);
-
-        public static ErpResult Failed(string errorMessage) => new ErpResult(false, errorMessage);
+    public static ErpResult Failed(string message)
+    {
+        return new ErpResult
+        {
+            Success = false,
+            Message = message
+        };
     }
 }
