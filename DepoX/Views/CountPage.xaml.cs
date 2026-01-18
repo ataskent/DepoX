@@ -1,4 +1,4 @@
-//using DepoX.Models;
+﻿//using DepoX.Models;
 //using DepoX.ViewModels;
 
 //namespace DepoX.Views;
@@ -68,12 +68,16 @@
 //        var summary = string.Join("\n", VM.CountItems.Select(x =>
 //            $"Barkod: {x.Barcode}, Miktar: {x.Quantity}, Renk: {x.Color}, Kalite: {x.Quality}"));
 
-//        await DisplayAlert("Say�m Kaydedildi", summary, "Tamam");
+//        await DisplayAlert("Sayım Kaydedildi", summary, "Tamam");
 //    }
 //}
 
 using DepoX.Models;
 using DepoX.ViewModels;
+using System.Text.Json;
+
+using System.Net.Http;
+using System.Text;
 
 namespace DepoX.Views;
 
@@ -126,7 +130,7 @@ public partial class CountPage : ContentPage
     {
         if (sender is SwipeItem swipe && swipe.CommandParameter is CountItem item)
         {
-            // Burada item �zerinde d�zenleme a�abilirsin
+            // Burada item üzerinde düzenleme açabilirsin
             VM.IsEditing = true;
         }
     }
@@ -139,13 +143,61 @@ public partial class CountPage : ContentPage
         }
     }
 
+
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         VM.IsEditing = false;
 
-        var summary = string.Join("\n", VM.CountItems.Select(x =>
-            $"Barkod: {x.Barcode}, Miktar: {x.Quantity}, Renk: {x.Color}, Kalite: {x.Quality}"));
+        if (VM.CountItems.Count == 0)
+        {
+            await DisplayAlert("Uyarı", "En az 1 barkod okutmalısın.", "Tamam");
+            return;
+        }
 
-        await DisplayAlert("Say�m Kaydedildi", summary, "Tamam");
+        // 🔴 SERVER'A GİDECEK EN BASİT SEPET
+        var draft = new
+        {
+            ClientDraftId = Guid.NewGuid().ToString(),
+            BasketId = "",                // boş → server yeni sepet açacak
+            WorkplaceCode = "01",
+            Items = VM.CountItems.Select(x => new
+            {
+                Barcode = x.Barcode,
+                StockCode = "",            // şimdilik boş
+                Quantity = (decimal)x.Quantity,
+                FromWarehouseCode = "",    // şimdilik boş
+                LocationCode = ""
+            }).ToArray()
+        };
+
+        try
+        {
+            var json = JsonSerializer.Serialize(new { draft });
+
+            var content = new StringContent(
+                json,
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            // ⚠️ DİKKAT: asmx DOSYA yolu
+            var url = "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveBasket";
+
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, content);
+            var resultText = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                await DisplayAlert("Servis Hata", resultText, "Tamam");
+                return;
+            }
+
+            await DisplayAlert("OK", "Barkodlar Uyumsoft’a gönderildi.", "Tamam");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Hata", ex.Message, "Tamam");
+        }
     }
 }
