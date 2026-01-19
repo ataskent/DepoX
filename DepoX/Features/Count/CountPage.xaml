@@ -1,0 +1,83 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="DepoX.Features.Count.CountPage"
+    Title="Sayım">
+
+    <!-- 🔹 Sayfa iskeleti -->
+    <Grid RowDefinitions="Auto,*,Auto"
+          Padding="10"
+          RowSpacing="8">
+
+        <!-- ========================= -->
+        <!-- 🔹 Barkod Okuma (ÜSTTE) -->
+        <!-- ========================= -->
+        <Entry
+            Grid.Row="0"
+            x:Name="BarcodeEntry"
+            Placeholder="Barkod okutun"
+            ReturnType="Done"
+            Completed="OnBarcodeCompleted"
+            ClearButtonVisibility="Never" />
+
+        <!-- ========================= -->
+        <!-- 🔹 LİSTE (SCROLL SADECE BURADA) -->
+        <!-- ========================= -->
+        <CollectionView
+            Grid.Row="1"
+            ItemsSource="{Binding Items}"
+            SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <SwipeView>
+
+                        <!-- 👉 SOLDAN → SAĞA SWIPE -->
+                        <SwipeView.LeftItems>
+                            <SwipeItems Mode="Reveal">
+                                <SwipeItem
+                                    Text="Sil"
+                                    BackgroundColor="Tomato"
+                                    Invoked="OnSwipeDelete"
+                                    CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+
+                        <!-- 👉 SATIR -->
+                        <Grid
+                            Padding="8"
+                            ColumnDefinitions="*,Auto"
+                            BackgroundColor="#F8FAFF">
+
+                            <Label
+                                Text="{Binding Barcode}"
+                                FontSize="14"
+                                VerticalOptions="Center" />
+
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding Quantity}"
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                VerticalOptions="Center"
+                                HorizontalTextAlignment="End" />
+                        </Grid>
+
+                    </SwipeView>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- ========================= -->
+        <!-- 🔹 KAYDET (HER ZAMAN ALTA SABİT) -->
+        <!-- ========================= -->
+        <Button
+            Grid.Row="2"
+            Text="Kaydet"
+            Command="{Binding SaveCommand}"
+            Margin="0,8,0,0" />
+
+    </Grid>
+</ContentPage>

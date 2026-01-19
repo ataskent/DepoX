@@ -60,13 +60,27 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Dtos\AsmxResponse.cs" />
-	  <Compile Remove="Dtos\BarcodeCache.cs" />
-	  <Compile Remove="Dtos\BarcodeMasterDto.cs" />
-	  <Compile Remove="Dtos\BasketItemSnapshotDto.cs" />
-	  <Compile Remove="Dtos\BasketSnapshotDto.cs" />
-	  <Compile Remove="Dtos\CountItem.cs" />
-	  <Compile Remove="Dtos\IBarcodeCache.cs" />
+	  <AndroidResource Remove="Dtos\**" />
+	  <AndroidResource Remove="Models\Count\**" />
+	  <Compile Remove="Dtos\**" />
+	  <Compile Remove="Models\Count\**" />
+	  <EmbeddedResource Remove="Dtos\**" />
+	  <EmbeddedResource Remove="Models\Count\**" />
+	  <MauiCss Remove="Dtos\**" />
+	  <MauiCss Remove="Models\Count\**" />
+	  <MauiXaml Remove="Dtos\**" />
+	  <MauiXaml Remove="Models\Count\**" />
+	  <None Remove="Dtos\**" />
+	  <None Remove="Models\Count\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Features\Count\BasketDraftDto.cs" />
+	  <Compile Remove="Features\Count\BasketItemDraftDto.cs" />
+	  <Compile Remove="Features\Count\CountDraftDto.cs" />
+	  <Compile Remove="Features\Count\CountDraftItemDto.cs" />
+	  <Compile Remove="Features\Count\CountModel.cs" />
+	  <Compile Remove="Features\Count\ICountService.cs" />
 	  <Compile Remove="Models\CountItem.cs" />
 	  <Compile Remove="Models\StockItem.cs" />
 	  <Compile Remove="Models\StockTransaction.cs" />
@@ -89,7 +103,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\CountPage.xaml">
+	  <MauiXaml Update="Features\Count\CountPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\MenuPopup.xaml">
@@ -107,8 +121,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Dtos\" />
-	  <Folder Include="Models\Count\" />
+	  <Folder Include="Models\" />
 	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 

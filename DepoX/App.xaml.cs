@@ -15,13 +15,4 @@ namespace DepoX
             return new Window(new AppShell());
         }
     }
-    //public partial class App : Application
-    //{
-    //    public App()
-    //    {
-    //        InitializeComponent();
-
-    //        MainPage = new AppShell(); // Menü yapısına geçiyoruz
-    //    }
-    //}
 }

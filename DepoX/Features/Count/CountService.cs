@@ -1,6 +1,4 @@
-ï»¿using DepoX.Dtos;
 using DepoX.Services.Erp;
-using System.Collections.ObjectModel;
 
 namespace DepoX.Features.Count;
 
@@ -13,75 +11,35 @@ public class CountService : ICountService
         _erpGateway = erpGateway;
     }
 
-    // UI SEPETÄ°: CountDraftItemDto
-    public void AddByBarcode(
-        ObservableCollection<CountItemModel> basket,
-        string barcode)
-    {
-        if (string.IsNullOrWhiteSpace(barcode))
-            return;
-
-        var existing = basket.FirstOrDefault(x => x.Barcode == barcode);
-
-        if (existing != null)
-        {
-            existing.Quantity += 1;
-            return;
-        }
-
-        basket.Add(new CountItemModel
-        {
-            Barcode = barcode,
-            Quantity = 1
-        });
-    }
-
-    public void RemoveByBarcode(
-        ObservableCollection<CountItemModel> basket,
-        CountItemModel item)
-    {
-        if (item == null)
-            return;
-
-        var existing = basket.FirstOrDefault(x => x == item);
-
-        if (existing != null)
-        {
-            if (existing.Quantity > 1)
-            {
-                existing.Quantity -= 1;
-            }
-            else
-            {
-                basket.Remove(existing);
-            }
-        }
-    }
-
-    
-    public async Task SaveDraftAsync(
+    public async Task SaveAsync(
         CountDraftDto draft,
         CancellationToken cancellationToken = default)
     {
-        if (draft.Items == null || draft.Items.Count == 0)
-            throw new InvalidOperationException("GÃ¶nderilecek barkod yok.");
+        if (draft.Items.Count == 0)
+            throw new InvalidOperationException("Gönderilecek barkod yok.");
 
-        var erpRequest = new BasketDraftDto
-        {
-            ClientDraftId = draft.ClientDraftId,
-            WorkplaceCode = draft.WorkplaceCode,
-            Items = draft.Items.Select(x => new BasketItemDraftDto
-            {
-                Barcode = x.Barcode,
-                Quantity = x.Quantity
-            }).ToArray()
-        };
+        // ?? UI ? ERP dönüþümü
+        var erpRequest = MapToErpBasket(draft);
 
         var result = await _erpGateway.SaveBasketAsync(
             erpRequest,
             cancellationToken);
 
         if (!result.Success)
-            throw new Exception(result.Message ?? "ERP kayÄ±t hatasÄ±.");
+            throw new Exception(result.Message ?? "ERP kayýt hatasý.");
+    }
+
+    private static ErpBasketDraft MapToErpBasket(CountDraftDto draft)
+    {
+        return new ErpBasketDraft
+        {
+            ClientDraftId = draft.ClientDraftId,
+            CreatedAt = draft.CreatedAt,
+            Items = draft.Items.Select(x => new ErpBasketItem
+            {
+                Barcode = x.Barcode,
+                Quantity = x.Quantity
+            }).ToArray()
+        };
     }
 }

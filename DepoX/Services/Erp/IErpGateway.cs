@@ -11,8 +11,8 @@ namespace DepoX.Services.Erp
         // To avoid ENC0033, either fully remove the commented line or restore the method signature if hot reload is required.
         // Here, we remove the commented-out method to resolve the diagnostic.
 
-        Task<ErpResult<BasketDraftDto>> SaveBasketAsync(
-            BasketDraftDto request,
+        Task<ErpResult<ErpBasketDraft>> SaveBasketAsync(
+            ErpBasketDraft request,
             CancellationToken cancellationToken = default);
 
         // İleride aynı pattern:

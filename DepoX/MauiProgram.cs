@@ -32,8 +32,9 @@ namespace DepoX
             //builder.Services.AddSingleton<IBarcodeCache, BarcodeCache>();
             // ===== Application Services =====
             builder.Services.AddTransient<ICountService, CountService>();
+            builder.Services.AddTransient<CountPage>(); 
+            builder.Services.AddTransient<CountViewModel>();
             // ===== Pages =====
-            builder.Services.AddTransient<CountPage>();
 
             // ===== Sync / Device =====
 

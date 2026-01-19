@@ -73,14 +73,14 @@ namespace DepoX.Services.Erp
             }
         }
 
-        public async Task<ErpResult<BasketDraftDto>> SaveBasketAsync(
-            BasketDraftDto request,
+        public async Task<ErpResult<ErpBasketDraft>> SaveBasketAsync(
+            ErpBasketDraft request,
             CancellationToken cancellationToken = default)
         {
             var url =
                 "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveBasket";
 
-            return await PostAsync<BasketDraftDto>(
+            return await PostAsync<ErpBasketDraft>(
                 url,
                 new { draft = request },
                 cancellationToken);

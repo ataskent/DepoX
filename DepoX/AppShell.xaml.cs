@@ -9,7 +9,7 @@ public partial class AppShell : Shell
         // Routing tanımları
         Routing.RegisterRoute("MenuPopup", typeof(Views.MenuPopup));
         Routing.RegisterRoute("TransferPage", typeof(Views.TransferPage));
-        Routing.RegisterRoute("CountPage", typeof(Views.CountPage));
+        Routing.RegisterRoute("CountPage", typeof(DepoX.Features.Count.CountPage));
         Routing.RegisterRoute("ShipmentPage", typeof(Views.ShipmentPage));
         Routing.RegisterRoute("OptionsPage", typeof(Views.OptionsPage));
     }
