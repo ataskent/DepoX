@@ -1,25 +1,32 @@
-﻿public class ErpResult
+﻿namespace DepoX.Dtos
 {
-    public bool Success { get; private set; }
-    public string Message { get; private set; }
-    public string ReferenceId { get; private set; }
-
-    public static ErpResult Ok(string message, string referenceId = null)
+    public class ErpResult<T>
     {
-        return new ErpResult
-        {
-            Success = true,
-            Message = message,
-            ReferenceId = referenceId
-        };
-    }
+        public bool Success { get; private set; }
+        public string Message { get; private set; }
+        public string ErrorCode { get; private set; }
+        public string ReferenceId { get; private set; }
+        public T Data { get; private set; }
 
-    public static ErpResult Failed(string message)
-    {
-        return new ErpResult
+        public static ErpResult<T> Ok(T data, string message, string referenceId)
         {
-            Success = false,
-            Message = message
-        };
+            return new ErpResult<T>
+            {
+                Success = true,
+                Data = data,
+                Message = message,
+                ReferenceId = referenceId
+            };
+        }
+
+        public static ErpResult<T> Failed(string errorCode, string message)
+        {
+            return new ErpResult<T>
+            {
+                Success = false,
+                ErrorCode = errorCode,
+                Message = message
+            };
+        }
     }
 }

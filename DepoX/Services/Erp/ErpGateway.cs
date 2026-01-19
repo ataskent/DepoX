@@ -1,4 +1,5 @@
 ﻿using DepoX.Dtos;
+using DepoX.Features.Count;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -9,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace DepoX.Services.Erp
 {
-    public class SoapErpGateway : IErpGateway
+    public class ErpGateway : IErpGateway
     {
         private readonly HttpClient _httpClient;
 
-        public SoapErpGateway(HttpClient httpClient)
+        public ErpGateway(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -72,17 +73,34 @@ namespace DepoX.Services.Erp
             }
         }
 
-        public async Task<ErpResult<BasketSnapshotDto>> SaveBasketAsync(
+        public async Task<ErpResult<BasketDraftDto>> SaveBasketAsync(
             BasketDraftDto request,
             CancellationToken cancellationToken = default)
         {
             var url =
                 "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveBasket";
 
-            return await PostAsync<BasketSnapshotDto>(
+            return await PostAsync<BasketDraftDto>(
                 url,
                 new { draft = request },
                 cancellationToken);
         }
+
+        //public async Task<List<BarcodeMasterDto>> GetBarcodeMastersAsync()
+        //{
+        //    var url =
+        //        "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetBarcodeMasters";
+
+        //    var result = await PostAsync<List<BarcodeMasterDto>>(
+        //        url,
+        //        new { },          // payload yok / boş
+        //        CancellationToken.None);
+
+        //    if (!result.Success)
+        //        throw new Exception(result.Message ?? "ERP barkod master hatası.");
+
+        //    return result.Data ?? new List<BarcodeMasterDto>();
+        //}
+
     }
 }

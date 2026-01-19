@@ -1,4 +1,4 @@
-﻿namespace DepoX.Dtos
+﻿namespace DepoX.Services.Erp
 {
     public class ErpResponseDto<T>
     {

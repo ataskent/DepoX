@@ -1,4 +1,4 @@
-﻿namespace DepoX.Dtos;
+﻿namespace DepoX.Features.Count;
 
 /// <summary>
 /// Terminalden servise giden sayım taslağı.

@@ -1,5 +1,5 @@
 ﻿using DepoX.Dtos;
-using DepoX.Models;
+using DepoX.Features.Count;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,7 +7,11 @@ namespace DepoX.Services.Erp
 {
     public interface IErpGateway
     {
-        Task<ErpResult<BasketSnapshotDto>> SaveBasketAsync(
+        // The method 'GetBarcodeMastersAsync()' was commented out, not deleted.
+        // To avoid ENC0033, either fully remove the commented line or restore the method signature if hot reload is required.
+        // Here, we remove the commented-out method to resolve the diagnostic.
+
+        Task<ErpResult<BasketDraftDto>> SaveBasketAsync(
             BasketDraftDto request,
             CancellationToken cancellationToken = default);
 
@@ -16,11 +20,5 @@ namespace DepoX.Services.Erp
         // Task<ErpResult<OrderDetailDto>> GetOrderByNoAsync(string orderNo, CancellationToken cancellationToken = default);
     }
 
-    public interface IErpCommitGateway
-    {
-        Task<ErpResult> CommitAsync(
-            StockTransaction transaction,
-            CancellationToken cancellationToken = default);
-    }
 }
 

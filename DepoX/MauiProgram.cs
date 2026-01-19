@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Maui;
-using Microsoft.Extensions.Logging;
-using DepoX.Services.Count;
+using DepoX.Features.Count;
 using DepoX.Services.Erp;
 using DepoX.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace DepoX
 {
@@ -23,30 +23,19 @@ namespace DepoX
                 });
 
             // ===== Local / Offline =====
-            builder.Services.AddSingleton<Services.LocalDataService>(sp =>
-            {
-                var dbPath = Path.Combine(FileSystem.AppDataDirectory, "local.db");
-                return new Services.LocalDataService(dbPath);
-            });
-
+          
             // ===== Network =====
             builder.Services.AddHttpClient();
-
             // ===== ERP =====
             builder.Services.AddSingleton(new HttpClient());
-            builder.Services.AddSingleton<IErpGateway, SoapErpGateway>();
-
+            builder.Services.AddSingleton<IErpGateway, ErpGateway>();
+            //builder.Services.AddSingleton<IBarcodeCache, BarcodeCache>();
             // ===== Application Services =====
             builder.Services.AddTransient<ICountService, CountService>();
-
-
-
             // ===== Pages =====
             builder.Services.AddTransient<CountPage>();
 
             // ===== Sync / Device =====
-            builder.Services.AddSingleton<Services.SyncService>();
-            builder.Services.AddSingleton<Services.BarcodeScannerService>();
 
 #if DEBUG
             builder.Logging.AddDebug();

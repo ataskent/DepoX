@@ -1,6 +1,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodels="clr-namespace:DepoX.ViewModels"
+             xmlns:viewmodels="clr-namespace:DepoX.Features.Count"
              x:Class="DepoX.Views.CountPage"
              Title="📦 Depo Sayım"
              BackgroundColor="#F0F2F5">
@@ -49,11 +49,11 @@
                             <SwipeView>
                                 <SwipeView.RightItems>
                                     <SwipeItems Mode="Reveal">
-                                        <SwipeItem Text="Yeni" BackgroundColor="LightGreen"
+                                        <!--<SwipeItem Text="Yeni" BackgroundColor="LightGreen"
                                                    Invoked="OnAddItemInvoked" />
                                         <SwipeItem Text="Düzelt" BackgroundColor="LightBlue"
                                                    Invoked="OnEditItemInvoked"
-                                                   CommandParameter="{Binding .}" />
+                                                   CommandParameter="{Binding .}" />-->
                                     </SwipeItems>
                                 </SwipeView.RightItems>
                                 <SwipeView.LeftItems>

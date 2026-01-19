@@ -60,6 +60,25 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Dtos\AsmxResponse.cs" />
+	  <Compile Remove="Dtos\BarcodeCache.cs" />
+	  <Compile Remove="Dtos\BarcodeMasterDto.cs" />
+	  <Compile Remove="Dtos\BasketItemSnapshotDto.cs" />
+	  <Compile Remove="Dtos\BasketSnapshotDto.cs" />
+	  <Compile Remove="Dtos\CountItem.cs" />
+	  <Compile Remove="Dtos\IBarcodeCache.cs" />
+	  <Compile Remove="Models\CountItem.cs" />
+	  <Compile Remove="Models\StockItem.cs" />
+	  <Compile Remove="Models\StockTransaction.cs" />
+	  <Compile Remove="Services\AppStartupService.cs" />
+	  <Compile Remove="Services\BarcodeScannerService.cs" />
+	  <Compile Remove="Services\LocalDataService.cs" />
+	  <Compile Remove="Services\SyncCoordinator.cs" />
+	  <Compile Remove="Services\SyncResult.cs" />
+	  <Compile Remove="Services\SyncService.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="12.3.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.12" />
@@ -85,6 +104,12 @@
 	  <MauiXaml Update="Views\TransferPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Dtos\" />
+	  <Folder Include="Models\Count\" />
+	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 
 </Project>

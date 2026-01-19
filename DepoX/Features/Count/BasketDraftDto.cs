@@ -1,4 +1,4 @@
-﻿namespace DepoX.Dtos
+﻿namespace DepoX.Features.Count
 {
     public class BasketDraftDto
     {
