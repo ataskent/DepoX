@@ -80,6 +80,8 @@
 	  <Compile Remove="Features\Count\CountContract.cs" />
 	  <Compile Remove="Features\Count\CountDraftDto.cs" />
 	  <Compile Remove="Features\Count\CountDraftItemDto.cs" />
+	  <Compile Remove="Features\Count\CountDtos.cs" />
+	  <Compile Remove="Features\Split\SplitPage.xaml.cs" />
 	  <Compile Remove="Helpers\AppServices.cs" />
 	  <Compile Remove="Models\CountItem.cs" />
 	  <Compile Remove="Models\StockItem.cs" />
@@ -91,6 +93,10 @@
 	  <Compile Remove="Services\SyncCoordinator.cs" />
 	  <Compile Remove="Services\SyncResult.cs" />
 	  <Compile Remove="Services\SyncService.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Remove="Features\Split\SplitPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -108,9 +114,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Features\Count\CountPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Features\Split\SplitPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\MenuPopup.xaml">
@@ -140,15 +143,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Features\Split\" />
 	  <Folder Include="Helpers\" />
 	  <Folder Include="Models\" />
 	  <Folder Include="ViewModels\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Update="Features\Split\SplitPage.xaml.cs">
-	    <DependentUpon>SplitPage.xaml</DependentUpon>
-	  </Compile>
 	</ItemGroup>
 
 </Project>
