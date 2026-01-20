@@ -40,8 +40,16 @@ public partial class CountPage : ContentPage
     }
 
     // Kaydet
-    private async void OnSaveClicked(object sender, EventArgs e)
+    private void OnSaveClicked(object sender, EventArgs e)
     {
+        _ = SafeSaveAsync();
+    }
+
+    private async Task SafeSaveAsync()
+    {
+        if (_vm.IsBusy)
+            return;
+
         if (_vm.Items.Count == 0)
         {
             await DisplayAlert(
@@ -80,7 +88,7 @@ public partial class CountPage : ContentPage
         }
         catch (OperationCanceledException)
         {
-            // Sessiz geçilebilir
+            // Kullanıcı bilerek iptal ettiyse sessiz geçmek OK
         }
         catch (Exception ex)
         {
@@ -94,6 +102,7 @@ public partial class CountPage : ContentPage
             _vm.IsBusy = false;
         }
     }
+
 
     protected override void OnDisappearing()
     {
