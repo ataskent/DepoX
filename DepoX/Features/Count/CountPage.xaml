@@ -4,80 +4,104 @@
     x:Class="DepoX.Features.Count.CountPage"
     Title="Sayım">
 
-    <!-- 🔹 Sayfa iskeleti -->
-    <Grid RowDefinitions="Auto,*,Auto"
-          Padding="10"
-          RowSpacing="8">
+    <Grid>
 
-        <!-- ========================= -->
-        <!-- 🔹 Barkod Okuma (ÜSTTE) -->
-        <!-- ========================= -->
-        <Entry
-            Grid.Row="0"
-            x:Name="BarcodeEntry"
-            Placeholder="Barkod okutun"
-            ReturnType="Done"
-            Completed="OnBarcodeCompleted"
-            ClearButtonVisibility="Never" />
+        <!-- ===================== -->
+        <!-- 🔹 ANA SAYFA -->
+        <!-- ===================== -->
+        <Grid RowDefinitions="Auto,*,Auto"
+              Padding="10"
+              RowSpacing="8">
 
-        <!-- ========================= -->
-        <!-- 🔹 LİSTE (SCROLL SADECE BURADA) -->
-        <!-- ========================= -->
-        <CollectionView
-            Grid.Row="1"
-            ItemsSource="{Binding Items}"
-            SelectionMode="None">
+            <!-- Barkod -->
+            <Entry
+                Grid.Row="0"
+                x:Name="BarcodeEntry"
+                Placeholder="Barkod okutun"
+                ReturnType="Done"
+                Completed="OnBarcodeCompleted"
+                ClearButtonVisibility="Never" />
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
+            <!-- Liste -->
+            <CollectionView
+                Grid.Row="1"
+                ItemsSource="{Binding Items}"
+                SelectionMode="None">
 
-                    <SwipeView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
 
-                        <!-- 👉 SOLDAN → SAĞA SWIPE -->
-                        <SwipeView.LeftItems>
-                            <SwipeItems Mode="Reveal">
-                                <SwipeItem
-                                    Text="Sil"
-                                    BackgroundColor="Tomato"
-                                    Invoked="OnSwipeDelete"
-                                    CommandParameter="{Binding .}" />
-                            </SwipeItems>
-                        </SwipeView.LeftItems>
+                        <SwipeView>
 
-                        <!-- 👉 SATIR -->
-                        <Grid
-                            Padding="8"
-                            ColumnDefinitions="*,Auto"
-                            BackgroundColor="#F8FAFF">
+                            <SwipeView.LeftItems>
+                                <SwipeItems Mode="Reveal">
+                                    <SwipeItem
+                                        Text="Sil"
+                                        BackgroundColor="Tomato"
+                                        Invoked="OnSwipeDelete"
+                                        CommandParameter="{Binding .}" />
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
 
-                            <Label
-                                Text="{Binding Barcode}"
-                                FontSize="14"
-                                VerticalOptions="Center" />
+                            <Grid Padding="8"
+                                  ColumnDefinitions="*,Auto"
+                                  BackgroundColor="#F8FAFF">
 
-                            <Label
-                                Grid.Column="1"
-                                Text="{Binding Quantity}"
-                                FontSize="14"
-                                FontAttributes="Bold"
-                                VerticalOptions="Center"
-                                HorizontalTextAlignment="End" />
-                        </Grid>
+                                <Label
+                                    Text="{Binding Barcode}"
+                                    FontSize="14"
+                                    VerticalOptions="Center" />
 
-                    </SwipeView>
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Quantity}"
+                                    FontSize="14"
+                                    FontAttributes="Bold"
+                                    VerticalOptions="Center"
+                                    HorizontalTextAlignment="End" />
+                            </Grid>
 
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                        </SwipeView>
 
-        <!-- ========================= -->
-        <!-- 🔹 KAYDET (HER ZAMAN ALTA SABİT) -->
-        <!-- ========================= -->
-        <Button
-            Grid.Row="2"
-            Text="Kaydet"
-            Command="{Binding SaveCommand}"
-            Margin="0,8,0,0" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Kaydet -->
+            <Button
+                Grid.Row="2"
+                Text="Kaydet"
+                Clicked="OnSaveClicked"
+                Margin="0,8,0,0" />
+
+        </Grid>
+
+        <!-- ===================== -->
+        <!-- 🔹 BUSY OVERLAY -->
+        <!-- ===================== -->
+        <Grid
+            BackgroundColor="#80000000"
+            IsVisible="{Binding IsBusy}"
+            InputTransparent="False">
+
+            <VerticalStackLayout
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Spacing="12">
+
+                <ActivityIndicator
+                    IsRunning="True"
+                    Color="White"
+                    WidthRequest="48"
+                    HeightRequest="48" />
+
+                <Label
+                    Text="Kaydediliyor..."
+                    TextColor="White"
+                    FontSize="14" />
+            </VerticalStackLayout>
+
+        </Grid>
 
     </Grid>
 </ContentPage>

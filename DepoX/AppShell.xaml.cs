@@ -5,22 +5,22 @@ public partial class AppShell : Shell
     public AppShell()
     {
         InitializeComponent();
-
-        // Routing tanımları
-        Routing.RegisterRoute("MenuPopup", typeof(Views.MenuPopup));
-        Routing.RegisterRoute("TransferPage", typeof(Views.TransferPage));
-        Routing.RegisterRoute("CountPage", typeof(DepoX.Features.Count.CountPage));
-        Routing.RegisterRoute("ShipmentPage", typeof(Views.ShipmentPage));
-        Routing.RegisterRoute("OptionsPage", typeof(Views.OptionsPage));
+        RegisterRoutes();
     }
 
-    private async void OnMenuClicked(object sender, EventArgs e)
+    private static void RegisterRoutes()
     {
-        await Shell.Current.GoToAsync("//MenuPopup");
-    }
+        // ===== OPERASYON MODÜLLERİ =====
+        Routing.RegisterRoute(
+            nameof(Features.Count.CountPage),
+            typeof(Features.Count.CountPage));
 
-    private async void OnOptionsClicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("OptionsPage");
+        Routing.RegisterRoute(
+            nameof(Features.Split.SplitPage),
+            typeof(Features.Split.SplitPage));
+
+        Routing.RegisterRoute(
+            nameof(Features.Basket.BasketPage),
+            typeof(Features.Basket.BasketPage));
     }
 }

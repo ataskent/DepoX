@@ -1,15 +1,22 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows.Input;
 
 namespace DepoX.Features.Count;
 
 public class CountViewModel : INotifyPropertyChanged
 {
-    private readonly ICountService _service;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    public ObservableCollection<CountItemDto> Items { get; } = new();
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    public Guid ClientDraftId { get; set; } = Guid.NewGuid();
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    public ObservableCollection<CountItemVm> Items { get; } = new();
+
 
     private bool _isBusy;
     public bool IsBusy
@@ -17,95 +24,55 @@ public class CountViewModel : INotifyPropertyChanged
         get => _isBusy;
         set
         {
+            if (_isBusy == value)
+                return;
+
             _isBusy = value;
             OnPropertyChanged();
-            ((Command)SaveCommand).ChangeCanExecute();
         }
     }
 
-    public ICommand SaveCommand { get; }
-
-    public CountViewModel(ICountService service)
+    public void Clear()
     {
-        _service = service;
-
-        SaveCommand = new Command(
-            async () => await SaveAsync(),
-            () => !IsBusy && Items.Count > 0);
-
-        Items.CollectionChanged += (_, _) =>
-            ((Command)SaveCommand).ChangeCanExecute();
+        Items.Clear();
+        ClientDraftId = Guid.NewGuid();
     }
 
-    // 🔹 Barkod okutulduğunda çağrılır
+
+
     public void AddBarcode(string barcode)
     {
-        if (string.IsNullOrWhiteSpace(barcode))
-            return;
-
         var existing = Items.FirstOrDefault(x => x.Barcode == barcode);
 
         if (existing != null)
         {
             existing.Quantity += 1;
-            return;
         }
-
-        Items.Add(new CountItemDto
+        else
         {
-            Barcode = barcode,
-            Quantity = 1
-        });
-    }
-
-    public void RemoveItem(CountItemDto item)
-    {
-        Items.Remove(item);
-    }
-
-    private async Task SaveAsync()
-    {
-        try
-        {
-            IsBusy = true;
-
-            var draft = new CountDraftDto
+            Items.Add(new CountItemVm
             {
-                ClientDraftId = Guid.NewGuid(),
-                CreatedAt = DateTime.Now,
-                Items = Items.ToList()
-            };
-
-            await _service.SaveAsync(draft);
-
-            Items.Clear();
-
-            await ShowMessage("Başarılı", "Sayım kaydedildi.");
-        }
-        catch (InvalidOperationException ex)
-        {
-            await ShowMessage("Uyarı", ex.Message);
-        }
-        catch (Exception ex)
-        {
-            await ShowMessage("Hata", "Kayıt sırasında hata oluştu.\n" + ex.Message);
-        }
-        finally
-        {
-            IsBusy = false;
+                Barcode = barcode,
+                Quantity = 1
+            });
         }
     }
-
-    private static async Task ShowMessage(string title, string message)
+    public void RemoveItem(CountItemVm item)
     {
-        await MainThread.InvokeOnMainThreadAsync(async () =>
-        {
-            if (Application.Current?.MainPage != null)
-                await Application.Current.MainPage.DisplayAlert(title, message, "Tamam");
-        });
+        if (Items.Contains(item))
+            Items.Remove(item);
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-    private void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
+public class CountItemVm
+{
+    public string Barcode { get; set; } = string.Empty;
+    public decimal Quantity { get; set; }
+
+    // UI'ya özel
+    public bool IsEditing { get; set; }
+    public bool IsSelected { get; set; }
+}
+
+
+

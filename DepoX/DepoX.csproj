@@ -77,15 +77,16 @@
 	<ItemGroup>
 	  <Compile Remove="Features\Count\BasketDraftDto.cs" />
 	  <Compile Remove="Features\Count\BasketItemDraftDto.cs" />
+	  <Compile Remove="Features\Count\CountContract.cs" />
 	  <Compile Remove="Features\Count\CountDraftDto.cs" />
 	  <Compile Remove="Features\Count\CountDraftItemDto.cs" />
-	  <Compile Remove="Features\Count\CountModel.cs" />
-	  <Compile Remove="Features\Count\ICountService.cs" />
+	  <Compile Remove="Helpers\AppServices.cs" />
 	  <Compile Remove="Models\CountItem.cs" />
 	  <Compile Remove="Models\StockItem.cs" />
 	  <Compile Remove="Models\StockTransaction.cs" />
 	  <Compile Remove="Services\AppStartupService.cs" />
 	  <Compile Remove="Services\BarcodeScannerService.cs" />
+	  <Compile Remove="Services\Erp\ErpDtos.cs" />
 	  <Compile Remove="Services\LocalDataService.cs" />
 	  <Compile Remove="Services\SyncCoordinator.cs" />
 	  <Compile Remove="Services\SyncResult.cs" />
@@ -103,16 +104,34 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Features\Basket\BasketPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Features\Count\CountPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Features\Split\SplitPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\MenuPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\OperationHubPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\OptionsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\ProductionHubPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\SettingsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\ShipmentPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\StockHubPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\TransferPage.xaml">
@@ -121,8 +140,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Helpers\" />
 	  <Folder Include="Models\" />
 	  <Folder Include="ViewModels\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Features\Split\SplitPage.xaml.cs">
+	    <DependentUpon>SplitPage.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

@@ -1,0 +1,31 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="DepoX.Views.OperationHubPage"
+    Title="">
+
+    <VerticalStackLayout
+        Padding="24"
+        Spacing="16">
+
+        <Button
+            Text="Sayım"
+            FontSize="18"
+            HeightRequest="56"
+            Clicked="OnCountClicked" />
+
+        <Button
+            Text="Barkod Bölme"
+            FontSize="18"
+            HeightRequest="56"
+            Clicked="OnSplitClicked" />
+
+        <Button
+            Text="Sepet"
+            FontSize="18"
+            HeightRequest="56"
+            Clicked="OnBasketClicked" />
+
+    </VerticalStackLayout>
+
+</ContentPage>

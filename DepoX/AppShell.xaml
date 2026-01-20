@@ -1,17 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <Shell
+    x:Class="DepoX.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:DepoX.Views"
-    x:Class="DepoX.AppShell">
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarBackgroundColor="#FFFFFF"
+    Shell.TabBarForegroundColor="#9CA3AF"
+    Shell.TabBarTitleColor="#1E293B"
+    Shell.TabBarUnselectedColor="#9CA3AF">
 
-    <!-- ToolbarItem: global butonlar -->
-    <Shell.ToolbarItems>
-        <ToolbarItem Text="☰ Menü" Clicked="OnMenuClicked"/>
-        <ToolbarItem Text="⚙️ Seçenekler" Clicked="OnOptionsClicked"/>
-    </Shell.ToolbarItems>
+    <!-- ========================= -->
+    <!-- ALT SABİT KATEGORİ MENÜSÜ -->
+    <!-- ========================= -->
+    <TabBar>
 
-    <!-- Ana içerik -->
-    <ShellContent Title="Menü"
-                  ContentTemplate="{DataTemplate views:MenuPopup}"
-                  Route="MenuPopup"/>
+        <!-- OPERASYON -->
+        <ShellContent
+            Title="Operasyon"
+            Icon="tab_operation.png"
+            ContentTemplate="{DataTemplate views:OperationHubPage}" />
+
+        <!-- STOK -->
+        <ShellContent
+            Title="Stok"
+            Icon="tab_stock.png"
+            ContentTemplate="{DataTemplate views:StockHubPage}" />
+
+        <!-- ÜRETİM -->
+        <ShellContent
+            Title="Üretim"
+            Icon="tab_production.png"
+            ContentTemplate="{DataTemplate views:ProductionHubPage}" />
+
+        <!-- AYARLAR -->
+        <ShellContent
+            Title="Ayarlar"
+            Icon="tab_settings.png"
+            ContentTemplate="{DataTemplate views:SettingsPage}" />
+
+    </TabBar>
+
 </Shell>
