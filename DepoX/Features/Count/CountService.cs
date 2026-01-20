@@ -3,6 +3,7 @@ using DepoX.Features.Count;
 using DepoX.Services.Erp;
 using DepoX.Services.Erp.Dtos;
 
+namespace DepoX.Features.Count;
 public class CountService : ICountService
 {
     private readonly IErpGateway _erpGateway;
@@ -20,3 +21,11 @@ public class CountService : ICountService
         return _erpGateway.SaveBasketAsync(erpDraft, cancellationToken);
     }
 }
+
+public interface ICountService
+{
+    Task<ErpResult<ErpBasketDraft>> SaveAsync(
+        CountDraft draft,
+        CancellationToken cancellationToken = default);
+}
+

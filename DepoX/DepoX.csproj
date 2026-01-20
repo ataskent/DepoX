@@ -81,12 +81,16 @@
 	  <Compile Remove="Features\Count\CountDraftDto.cs" />
 	  <Compile Remove="Features\Count\CountDraftItemDto.cs" />
 	  <Compile Remove="Features\Count\CountDtos.cs" />
+	  <Compile Remove="Features\Count\CountErpMappings.cs" />
+	  <Compile Remove="Features\Count\ICountService.cs" />
+	  <Compile Remove="Features\Split\ISplitService.cs" />
 	  <Compile Remove="Helpers\AppServices.cs" />
 	  <Compile Remove="Models\CountItem.cs" />
 	  <Compile Remove="Models\StockItem.cs" />
 	  <Compile Remove="Models\StockTransaction.cs" />
 	  <Compile Remove="Services\AppStartupService.cs" />
 	  <Compile Remove="Services\BarcodeScannerService.cs" />
+	  <Compile Remove="Services\Erp\Dtos\SplitDto.cs" />
 	  <Compile Remove="Services\Erp\ErpDtos.cs" />
 	  <Compile Remove="Services\LocalDataService.cs" />
 	  <Compile Remove="Services\SyncCoordinator.cs" />

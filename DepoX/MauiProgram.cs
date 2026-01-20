@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using DepoX.Features.Count;
+using DepoX.Features.Split;
 using DepoX.Services.Erp;
 using DepoX.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,9 +33,12 @@ namespace DepoX
             //builder.Services.AddSingleton<IBarcodeCache, BarcodeCache>();
             // ===== Application Services =====
             builder.Services.AddTransient<ICountService, CountService>();
-            builder.Services.AddTransient<CountPage>(); 
-            builder.Services.AddTransient<CountViewModel>();
+            builder.Services.AddTransient<ISplitService, SplitService>();
             // ===== Pages =====
+            builder.Services.AddTransient<SplitPage>();
+            builder.Services.AddTransient<SplitViewModel>();
+            builder.Services.AddTransient<CountPage>();
+            builder.Services.AddTransient<CountViewModel>();
 
             // ===== Sync / Device =====
 

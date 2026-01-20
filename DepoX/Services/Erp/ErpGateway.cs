@@ -96,5 +96,19 @@ namespace DepoX.Services.Erp
                 new { draft = request },
                 cancellationToken);
         }
+
+        public async Task<ErpResult<ErpBarcodeDetailDto>> GetBarcodeDetailAsync(
+            string barcode,
+            CancellationToken cancellationToken = default)
+        {
+            var url =
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetBarcodeDetail";
+
+            return await PostAsync<ErpBarcodeDetailDto>(
+                url,
+                new { barcode },
+                cancellationToken);
+        }
+
     }
 }

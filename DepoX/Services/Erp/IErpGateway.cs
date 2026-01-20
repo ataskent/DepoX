@@ -8,6 +8,11 @@ namespace DepoX.Services.Erp
         Task<ErpResult<ErpBasketDraft>> SaveBasketAsync(
             ErpBasketDraft draft,
             CancellationToken cancellationToken = default);
+
+        Task<ErpResult<ErpBarcodeDetailDto>> GetBarcodeDetailAsync(
+            string barcode,
+            CancellationToken cancellationToken = default);
+
     }
 
 }

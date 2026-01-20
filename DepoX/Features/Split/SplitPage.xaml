@@ -1,12 +1,180 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="DepoX.Features.Split.SplitPage"
-             Title="Barkod Bölme">
-    <VerticalStackLayout>
-        <Label 
-            Text="Barkod Bölme"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="DepoX.Features.Split.SplitPage"
+    Title="Barkod Bölme">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
+          Padding="10"
+          RowSpacing="8">
+
+        <!-- ========================= -->
+        <!-- 1) Barkod Okuma -->
+        <!-- ========================= -->
+        <Entry
+            Grid.Row="0"
+            x:Name="BarcodeEntry"
+            Placeholder="Barkod okutun"
+            ReturnType="Done"
+            Completed="OnBarcodeCompleted" />
+
+        <!-- ========================= -->
+        <!-- 2) Okutulan Barkod Özeti -->
+        <!-- ========================= -->
+        <VerticalStackLayout Grid.Row="1"
+                             IsVisible="{Binding HasOriginalBarcode}"
+                             Spacing="2">
+
+            <Label Text="{Binding Original.StockCode}"
+                   FontAttributes="Bold"
+                   FontSize="14" />
+
+            <Label Text="{Binding OriginalLine2}"
+                   FontSize="12"
+                   TextColor="#64748B" />
+
+            <BoxView HeightRequest="1"
+                     Color="#E5E7EB"
+                     Margin="0,4" />
+        </VerticalStackLayout>
+
+        <!-- ========================= -->
+        <!-- 2.1) YENİ BARKOD EKLE -->
+        <!-- ========================= -->
+        <Button
+            Grid.Row="2"
+            Text="+ Yeni Barkod Ekle"
+            IsVisible="{Binding HasOriginalBarcode}"
+            Clicked="OnAddSplitClicked"
+            Margin="0,4" />
+
+        <!-- ========================= -->
+        <!-- 3) LİSTE ALANI -->
+        <!-- ========================= -->
+        <CollectionView
+            Grid.Row="3"
+            ItemsSource="{Binding MixedItems}"
+            SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <!-- 🔑 TEK ROOT -->
+                    <Grid>
+
+                        <!-- ========================= -->
+                        <!-- YENİ SPLIT – LİSTE MODU -->
+                        <!-- ========================= -->
+                        <SwipeView
+                            IsVisible="{Binding IsNewAndNotEditing}">
+
+                            <SwipeView.LeftItems>
+                                <SwipeItems Mode="Reveal">
+                                    <SwipeItem
+                                        Text="Düzenle"
+                                        BackgroundColor="#38BDF8"
+                                        Invoked="OnEditSwipe"
+                                        CommandParameter="{Binding .}" />
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+
+                            <SwipeView.RightItems>
+                                <SwipeItems Mode="Reveal">
+                                    <SwipeItem
+                                        Text="Sil"
+                                        BackgroundColor="Tomato"
+                                        Invoked="OnSwipeDelete"
+                                        CommandParameter="{Binding .}" />
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
+                            <Grid Padding="6"
+                                  BackgroundColor="#ECFEFF">
+                                <Label
+                                    Text="{Binding SummaryLine}"
+                                    FontSize="13"
+                                    TextColor="#0F172A" />
+                            </Grid>
+                        </SwipeView>
+
+                        <!-- ========================= -->
+                        <!-- YENİ SPLIT – EDIT MOD -->
+                        <!-- ========================= -->
+                        <Border
+                            IsVisible="{Binding IsEditing}"
+                            Padding="10"
+                            Margin="0,4"
+                            Stroke="#38BDF8"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10"
+                            BackgroundColor="White">
+
+                            <VerticalStackLayout Spacing="8">
+
+                                <Picker Title="Stok"
+                                        ItemsSource="{Binding StockList}"
+                                        SelectedItem="{Binding StockCode}" />
+
+                                <Picker Title="Parti"
+                                        ItemsSource="{Binding LotList}"
+                                        SelectedItem="{Binding LotCode}" />
+
+                                <Picker Title="Renk"
+                                        ItemsSource="{Binding ColorList}"
+                                        SelectedItem="{Binding ColorCode}" />
+
+                                <Picker Title="Birim"
+                                        ItemsSource="{Binding UnitList}"
+                                        SelectedItem="{Binding UnitCode}" />
+
+                                <Entry Placeholder="Miktar"
+                                       Keyboard="Numeric"
+                                       Text="{Binding Quantity}" />
+
+                                <Button Text="Tamam"
+                                        Clicked="OnEditDone"
+                                        CommandParameter="{Binding .}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- ========================= -->
+                        <!-- ESKİ SPLIT – PASİF -->
+                        <!-- ========================= -->
+                        <Grid
+                            IsVisible="{Binding IsExisting}"
+                            Padding="6"
+                            BackgroundColor="#F8FAFC"
+                            Opacity="0.6">
+
+                            <Label
+                                Text="{Binding SummaryLine}"
+                                FontSize="12"
+                                TextColor="#475569" />
+                        </Grid>
+
+                    </Grid>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- ========================= -->
+        <!-- 4) ALT BAR -->
+        <!-- ========================= -->
+        <Grid Grid.Row="4"
+              ColumnDefinitions="*,Auto"
+              Padding="6">
+
+            <Label
+                Text="{Binding TotalBarcodeCount, StringFormat='Toplam Barkod: {0}'}"
+                VerticalOptions="Center" />
+
+            <Button
+                Grid.Column="1"
+                Text="Kaydet"
+                Clicked="OnSaveClicked" />
+        </Grid>
+
+    </Grid>
 </ContentPage>
