@@ -14,7 +14,8 @@ public class SplitDraft
 
 public class SplitNewBarcodeDraft
 {
-    public string StockCode { get; set; } = default!;
+    public string ItemCode { get; set; } = default!;
+    public string ItemName { get; set; } = default!;
     public string LotCode { get; set; } = default!;
     public string ColorCode { get; set; } = default!;
     public string UnitCode { get; set; } = default!;
@@ -24,7 +25,8 @@ public class SplitNewBarcodeDraft
 public class ErpBarcodeDetailDto
 {
     public string Barcode { get; set; } = "";
-    public string StockCode { get; set; } = "";
+    public string ItemCode { get; set; } = "";
+    public string ItemName { get; set; } = "";  
     public string LotCode { get; set; } = "";
     public string ColorCode { get; set; } = "";
     public string UnitCode { get; set; } = "";
@@ -36,7 +38,8 @@ public class ErpBarcodeDetailDto
 public class ErpSplitBarcodeDto
 {
     public string Barcode { get; set; } = "";
-    public string StockCode { get; set; } = "";
+    public string ItemCode { get; set; } = "";
+    public string ItemName { get; set; } = "";
     public string LotCode { get; set; } = "";
     public string ColorCode { get; set; } = "";
     public string UnitCode { get; set; } = "";

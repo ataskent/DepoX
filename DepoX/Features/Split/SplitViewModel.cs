@@ -42,7 +42,8 @@ public class SplitViewModel : INotifyPropertyChanged
         {
             IsExisting = false,
             IsEditing = true,
-            StockCode = Original?.StockCode ?? "",
+            ItemCode = Original?.ItemCode ?? "",
+            ItemName = Original?.ItemName ?? "",
             LotCode = Original?.LotCode ?? "",
             ColorCode = Original?.ColorCode ?? "",
             UnitCode = Original?.UnitCode ?? "",
@@ -113,7 +114,8 @@ public class SplitViewModel : INotifyPropertyChanged
         SetOriginal(new SplitRowVm
         {
             IsExisting = false,
-            StockCode = dto.StockCode,
+            ItemCode = dto.ItemCode,
+            ItemName = dto.ItemName,
             LotCode = dto.LotCode,
             ColorCode = dto.ColorCode,
             UnitCode = dto.UnitCode,
@@ -128,7 +130,8 @@ public class SplitViewModel : INotifyPropertyChanged
             ExistingSplits.Add(new SplitRowVm
             {
                 IsExisting = true,
-                StockCode = s.StockCode,
+                ItemCode = s.ItemCode,
+                ItemName = s.ItemName,
                 LotCode = s.LotCode,
                 ColorCode = s.ColorCode,
                 UnitCode = s.UnitCode,
@@ -163,7 +166,8 @@ public class SplitRowVm : INotifyPropertyChanged
     public bool IsNewAndNotEditing => !IsExisting && !IsEditing;
 
     // ===== Data =====
-    public string StockCode { get; set; } = "";
+    public string ItemCode { get; set; } = "";
+    public string ItemName { get; set; } = "";  
     public string LotCode { get; set; } = "";
     public string ColorCode { get; set; } = "";
     public string UnitCode { get; set; } = "";
@@ -177,7 +181,7 @@ public class SplitRowVm : INotifyPropertyChanged
 
     // ===== Liste görünümü =====
     public string SummaryLine =>
-        $"{StockCode} · {LotCode} · {ColorCode} · {UnitCode} · {Quantity}";
+        $"{ItemCode} · {ItemName} · {LotCode} · {ColorCode} · {UnitCode} · {Quantity}";
 
     public event PropertyChangedEventHandler? PropertyChanged;
     void OnPropertyChanged([CallerMemberName] string? name = null)

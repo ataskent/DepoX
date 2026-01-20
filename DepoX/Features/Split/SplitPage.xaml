@@ -26,7 +26,7 @@
                              IsVisible="{Binding HasOriginalBarcode}"
                              Spacing="2">
 
-            <Label Text="{Binding Original.StockCode}"
+            <Label Text="{Binding Original.ItemCode}"
                    FontAttributes="Bold"
                    FontSize="14" />
 
@@ -114,7 +114,7 @@
 
                                 <Picker Title="Stok"
                                         ItemsSource="{Binding StockList}"
-                                        SelectedItem="{Binding StockCode}" />
+                                        SelectedItem="{Binding ItemCode}" />
 
                                 <Picker Title="Parti"
                                         ItemsSource="{Binding LotList}"

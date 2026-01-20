@@ -12,7 +12,8 @@ public class SplitBarcodeModel
 {
     public string Barcode { get; set; } = "";
 
-    public string StockCode { get; set; } = "";
+    public string ItemCode { get; set; } = "";
+    public string ItemName { get; set; } = "";
     public string LotCode { get; set; } = "";
     public string ColorCode { get; set; } = "";
     public string UnitCode { get; set; } = "";
@@ -41,7 +42,8 @@ public class SplitBarcodeModel
 
         public bool IsNewAndNotEditing => !IsExisting && !IsEditing;
 
-        public string StockCode { get; set; } = "";
+        public string ItemCode { get; set; } = "";
+        public string ItemName { get; set; } = "";  
         public string LotCode { get; set; } = "";
         public string ColorCode { get; set; } = "";
         public string UnitCode { get; set; } = "";
@@ -54,7 +56,7 @@ public class SplitBarcodeModel
         public IList<string> UnitList { get; set; } = new List<string>();
 
         public string SummaryLine =>
-            $"{StockCode} · {LotCode} · {ColorCode} · {UnitCode} · {Quantity}";
+            $"{ItemCode} · {ItemName} · {LotCode} · {ColorCode} · {UnitCode} · {Quantity}";
 
         public event PropertyChangedEventHandler? PropertyChanged;
         void OnPropertyChanged([CallerMemberName] string? name = null)

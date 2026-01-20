@@ -19,7 +19,8 @@ public static class SplitMapper
         return new SplitBarcodeModel
         {
             Barcode = dto.Barcode,
-            StockCode = dto.StockCode,
+            ItemCode = dto.ItemCode,
+            ItemName = dto.ItemName,
             LotCode = dto.LotCode,
             ColorCode = dto.ColorCode,
             UnitCode = dto.UnitCode,
@@ -36,7 +37,8 @@ public static class SplitMapper
         return new SplitBarcodeModel
         {
             Barcode = dto.Barcode,
-            StockCode = dto.StockCode,
+            ItemCode = dto.ItemCode,
+            ItemName = dto.ItemName,
             LotCode = dto.LotCode,
             ColorCode = dto.ColorCode,
             UnitCode = dto.UnitCode,
@@ -54,7 +56,8 @@ public static class SplitMapper
         return new SplitRowVm
         {
             IsExisting = isExisting,
-            StockCode = model.StockCode,
+            ItemCode = model.ItemCode,
+            ItemName = model.ItemName,
             LotCode = model.LotCode,
             ColorCode = model.ColorCode,
             UnitCode = model.UnitCode,
@@ -70,7 +73,8 @@ public static class SplitMapper
     {
         return new SplitBarcodeModel
         {
-            StockCode = vm.StockCode,
+            ItemCode = vm.ItemCode,
+            ItemName = vm.ItemName,
             LotCode = vm.LotCode,
             ColorCode = vm.ColorCode,
             UnitCode = vm.UnitCode,
@@ -86,7 +90,8 @@ public static class SplitMapper
     //{
     //    return new ErpSplitSaveDto
     //    {
-    //        StockCode = model.StockCode,
+    //        ItemCode = model.ItemCode,
+    //        ItemName = model.ItemName,
     //        LotCode = model.LotCode,
     //        ColorCode = model.ColorCode,
     //        UnitCode = model.UnitCode,
