@@ -1,22 +1,12 @@
-﻿using DepoX.Features.Split;
-using DepoX.Services.Erp.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DepoX.Services.Erp.Dtos;
 
 namespace DepoX.Features.Split;
 
 public static class SplitMapper
 {
-    // ======================================================
-    // ERP → DOMAIN MODEL
-    // ======================================================
-    public static SplitBarcodeModel ToModel(
-        ErpBarcodeDetailDto dto)
-    {
-        return new SplitBarcodeModel
+    // ERP → DOMAIN
+    public static SplitBarcodeModel ToModel(ErpBarcodeDetailDto dto)
+        => new()
         {
             Barcode = dto.Barcode,
             ItemCode = dto.ItemCode,
@@ -25,16 +15,16 @@ public static class SplitMapper
             ColorCode = dto.ColorCode,
             UnitCode = dto.UnitCode,
             Quantity = dto.Quantity,
+            AvailableLots = dto.AvailableLots,
+            AvailableColors = dto.AvailableColors,
+            AvailableUnits = dto.AvailableUnits,
             ExistingSplits = dto.ExistingSplits
                 .Select(ToModel)
                 .ToList()
         };
-    }
 
-    private static SplitBarcodeModel ToModel(
-        ErpSplitBarcodeDto dto)
-    {
-        return new SplitBarcodeModel
+    private static SplitBarcodeModel ToModel(ErpSplitBarcodeDto dto)
+        => new()
         {
             Barcode = dto.Barcode,
             ItemCode = dto.ItemCode,
@@ -44,18 +34,13 @@ public static class SplitMapper
             UnitCode = dto.UnitCode,
             Quantity = dto.Quantity
         };
-    }
 
-    // ======================================================
-    // DOMAIN MODEL → VIEWMODEL
-    // ======================================================
-    public static SplitRowVm ToVm(
-        SplitBarcodeModel model,
-        bool isExisting)
-    {
-        return new SplitRowVm
+    // DOMAIN → VM
+    public static SplitRowVm ToVm(SplitBarcodeModel model, bool isExisting)
+        => new()
         {
             IsExisting = isExisting,
+            Barcode = model.Barcode,
             ItemCode = model.ItemCode,
             ItemName = model.ItemName,
             LotCode = model.LotCode,
@@ -63,39 +48,25 @@ public static class SplitMapper
             UnitCode = model.UnitCode,
             Quantity = model.Quantity
         };
-    }
 
-    // ======================================================
-    // VIEWMODEL → DOMAIN MODEL (SAVE)
-    // ======================================================
-    public static SplitBarcodeModel ToModel(
-        SplitRowVm vm)
-    {
-        return new SplitBarcodeModel
+    // VM → ERP SAVE
+    public static SplitDraft ToErpDraft(
+        string originalBarcode,
+        IEnumerable<SplitRowVm> newSplits)
+        => new()
         {
-            ItemCode = vm.ItemCode,
-            ItemName = vm.ItemName,
-            LotCode = vm.LotCode,
-            ColorCode = vm.ColorCode,
-            UnitCode = vm.UnitCode,
-            Quantity = vm.Quantity
+            OriginalBarcode = originalBarcode,
+            NewBarcodes = newSplits
+                .Select(x => new SplitNewBarcodeDraft
+                {
+                    
+                    ItemCode = x.ItemCode,
+                    ItemName = x.ItemName,
+                    LotCode = x.LotCode,
+                    ColorCode = x.ColorCode,
+                    UnitCode = x.UnitCode,
+                    Quantity = x.Quantity
+                })
+                .ToList()
         };
-    }
-
-    //// ======================================================
-    //// DOMAIN MODEL → ERP SAVE DTO
-    //// ======================================================
-    //public static ErpSplitSaveDto ToErpSaveDto(
-    //    SplitBarcodeModel model)
-    //{
-    //    return new ErpSplitSaveDto
-    //    {
-    //        ItemCode = model.ItemCode,
-    //        ItemName = model.ItemName,
-    //        LotCode = model.LotCode,
-    //        ColorCode = model.ColorCode,
-    //        UnitCode = model.UnitCode,
-    //        Quantity = model.Quantity
-    //    };
-    //}
 }

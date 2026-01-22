@@ -1,10 +1,5 @@
 ﻿using DepoX.Services.Erp;
 using DepoX.Services.Erp.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DepoX.Features.Split;
 
@@ -17,14 +12,7 @@ public class SplitService : ISplitService
         _erp = erp;
     }
 
-    public Task SaveAsync(SplitDraft draft, CancellationToken cancellationToken = default)
-    {
-        // ERP çağrısı buraya gelecek
-        return Task.CompletedTask;
-    }
-    
-
-    public async Task<ErpBarcodeDetailDto> GetBarcodeAsync(
+    public async Task<SplitBarcodeModel> GetBarcodeAsync(
         string barcode,
         CancellationToken cancellationToken = default)
     {
@@ -33,17 +21,31 @@ public class SplitService : ISplitService
         if (!result.Success || result.Data == null)
             throw new Exception(result.Message ?? "ERP barkod bilgisi alınamadı.");
 
-        return result.Data;
+        return SplitMapper.ToModel(result.Data);
+    }
+
+    public async Task<SplitBarcodeModel> SaveAsync(
+        SplitDraft draft,
+        CancellationToken cancellationToken = default)
+    {        
+        if (!draft.NewBarcodes.Any())
+            return new SplitBarcodeModel();
+        var result = await _erp.SaveSplitAsync(draft, cancellationToken);
+
+        if (!result.Success || result.Data == null)
+            throw new Exception(result.Message ?? "Barkod bölme işlemi tamamlanamadı.");
+
+        return SplitMapper.ToModel(result.Data);
     }
 }
 
 public interface ISplitService
 {
-    Task SaveAsync(SplitDraft draft, CancellationToken cancellationToken = default);
-
-    Task<ErpBarcodeDetailDto> GetBarcodeAsync(
+    Task<SplitBarcodeModel> GetBarcodeAsync(
         string barcode,
         CancellationToken cancellationToken = default);
 
-
+    Task<SplitBarcodeModel> SaveAsync(
+        SplitDraft draft,
+        CancellationToken cancellationToken = default);
 }

@@ -1,5 +1,4 @@
-﻿using DepoX.Services.Erp.Dtos;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -7,185 +6,269 @@ namespace DepoX.Features.Split;
 
 public class SplitViewModel : INotifyPropertyChanged
 {
-    // ===== Original Barcode =====
+    private readonly ISplitService _service;
+
+    // 🔴 ORİJİNAL (TEK NESNE)
+
+    private SplitBarcodeModel? _loadedModel;
     public SplitRowVm? Original { get; private set; }
 
-    public bool HasOriginalBarcode => Original != null;
+    bool _hasOriginalBarcode;
+    public bool HasOriginalBarcode
+    {
+        get => _hasOriginalBarcode;
+        private set
+        {
+            if (_hasOriginalBarcode == value) return;
+            _hasOriginalBarcode = value;
+            OnPropertyChanged();
+        }
+    }
+
 
     public string OriginalLine2 =>
-        Original == null
-            ? ""
-            : $"{Original.LotCode} · {Original.ColorCode} · {Original.UnitCode} · Miktar: {Original.Quantity}";
+    Original == null
+        ? ""
+        : $"Parti: {Original.LotCode} · Renk: {Original.ColorCode} · Miktar: {Original.Quantity} {Original.UnitCode}";
 
-    // ===== Lists =====
-    public ObservableCollection<SplitRowVm> NewSplits { get; } = new();
+
+    // ⚪ ESKİ SPLITLER (PASİF)
     public ObservableCollection<SplitRowVm> ExistingSplits { get; } = new();
-    public ObservableCollection<SplitRowVm> MixedItems { get; } = new();
 
-    public int TotalBarcodeCount => NewSplits.Count + ExistingSplits.Count;
+    // 🟢 YENİ SPLITLER (AKTİF)
+    public ObservableCollection<SplitRowVm> NewSplits { get; } = new();
 
-    // ===== PUBLIC API =====
+    // UI için birleşik liste
+    public IEnumerable<SplitRowVm> MixedItems =>
+        ExistingSplits.Concat(NewSplits);
 
-    public void SetOriginal(SplitRowVm original)
+    // Draft popup
+    public SplitRowVm? DraftRow { get; private set; }
+    public bool IsDraftOpen => DraftRow != null;
+
+    public string OriginalBarcode { get; private set; } = "";
+
+    public SplitViewModel(ISplitService service)
     {
-        Original = original;
-        OnPropertyChanged(nameof(Original));
-        OnPropertyChanged(nameof(HasOriginalBarcode));
-        OnPropertyChanged(nameof(OriginalLine2));
+        _service = service;
+
+        ExistingSplits.CollectionChanged += (_, __) =>
+            OnPropertyChanged(nameof(MixedItems));
+
+        NewSplits.CollectionChanged += (_, __) =>
+            OnPropertyChanged(nameof(MixedItems));
     }
 
-    public void AddNewSplit()
+    // ===============================
+    // LOAD
+    // ===============================
+    public async Task LoadAsync(string barcode)
     {
-        CloseAllEdits();
+        // 🔴 EN BAŞTA: her şeyi kapat
+        HasOriginalBarcode = false;
+        Original = null;
+        _loadedModel = null;
 
-        var row = new SplitRowVm
+        ExistingSplits.Clear();
+        NewSplits.Clear();
+
+        OnPropertyChanged(nameof(Original));
+        OnPropertyChanged(nameof(OriginalLine2));
+        OnPropertyChanged(nameof(MixedItems));
+
+        SplitBarcodeModel model;
+
+        try
+        {
+            model = await _service.GetBarcodeAsync(barcode);
+        }
+        catch
+        {
+            // barkod bulunamadı → UI kapalı kalır
+            return;
+        }
+
+        if (model == null)
+            return;
+
+        // ✅ SADECE BAŞARILIYSA
+        _loadedModel = model;
+        Original = SplitMapper.ToVm(model, true);
+        HasOriginalBarcode = true;
+
+        OnPropertyChanged(nameof(Original));
+        OnPropertyChanged(nameof(OriginalLine2));
+
+        foreach (var e in model.ExistingSplits)
+            ExistingSplits.Add(SplitMapper.ToVm(e, true));
+    }
+
+
+
+    // ===============================
+    // NEW SPLIT (POPUP)
+    // ===============================
+    public void StartNewSplit()
+    {
+        if (Original == null || _loadedModel == null)
+            return;
+
+        DraftRow = new SplitRowVm
         {
             IsExisting = false,
-            IsEditing = true,
-            ItemCode = Original?.ItemCode ?? "",
-            ItemName = Original?.ItemName ?? "",
-            LotCode = Original?.LotCode ?? "",
-            ColorCode = Original?.ColorCode ?? "",
-            UnitCode = Original?.UnitCode ?? "",
+
+            ItemCode = Original.ItemCode,
+            ItemName = Original.ItemName,
+
+            // 🔴 Varsayılanlar
+            LotCode = Original.LotCode,
+            ColorCode = Original.ColorCode,
+            UnitCode = Original.UnitCode,
             Quantity = 0,
 
-            // şimdilik dummy – ERP’den doldurulacak
-            StockList = new[] { "STK-001", "STK-002" },
-            LotList = new[] { "P01", "P02" },
-            ColorList = new[] { "KIRMIZI", "MAVİ" },
-            UnitList = new[] { "ADET", "KG" }
+            // 🔴 ERP’den gelen listeler
+            LotList = new List<string> { "" }.Concat(_loadedModel.AvailableLots).ToList(),
+            ColorList = new List<string> { "" }.Concat(_loadedModel.AvailableColors).ToList(),
+            UnitList = new List<string> { "" }.Concat(_loadedModel.AvailableUnits).ToList()
+
         };
 
-        NewSplits.Insert(0, row);
-        RebuildMixedItems();
+        OnPropertyChanged(nameof(DraftRow));
+        OnPropertyChanged(nameof(IsDraftOpen));
     }
 
+    string ExtractCode(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return "";
+
+        var idx = value.IndexOf('-');
+        return idx > 0 ? value.Substring(0, idx).Trim() : value;
+    }
+
+
+
+    public void ConfirmDraft()
+    {
+        if (DraftRow == null || Original == null)
+            return;
+
+        if (DraftRow.Quantity <= 0)
+            return;
+    
+        // 🔴 ORİJİNALLE AYNI MI KONTROLÜ
+        bool sameAsOriginal =
+            DraftRow.LotCode == Original.LotCode &&
+            DraftRow.ColorCode == Original.ColorCode &&
+            DraftRow.UnitCode == Original.UnitCode &&
+            DraftRow.Quantity == Original.Quantity;
+
+        if (sameAsOriginal)
+            return; // ❌ birebir aynısını ekleme
+
+        // 🔴 CLONE OLUŞTUR (referans bug’ını da önler)
+        var newRow = new SplitRowVm
+        {
+            IsExisting = false,
+            ItemCode = DraftRow.ItemCode,
+            ItemName = DraftRow.ItemName,
+            LotCode = DraftRow.LotCode,
+            ColorCode = ExtractCode(DraftRow.ColorCode),
+            UnitCode = DraftRow.UnitCode,
+            Quantity = DraftRow.Quantity
+        };
+
+        NewSplits.Add(newRow);
+
+        DraftRow = null;
+        OnPropertyChanged(nameof(DraftRow));
+        OnPropertyChanged(nameof(IsDraftOpen));
+    }
+
+
+    public void CancelDraft()
+    {
+        DraftRow = null;
+        OnPropertyChanged(nameof(DraftRow));
+        OnPropertyChanged(nameof(IsDraftOpen));
+    }
+
+    // ===============================
+    // EDIT / DELETE
+    // ===============================
     public void Edit(SplitRowVm row)
     {
-        CloseAllEdits();
+        if (row.IsExisting)
+            return;
+
         row.IsEditing = true;
     }
 
     public void FinishEdit(SplitRowVm row)
     {
         row.IsEditing = false;
-        RebuildMixedItems();
     }
 
     public void Remove(SplitRowVm row)
     {
         if (row.IsExisting)
-            ExistingSplits.Remove(row);
-        else
-            NewSplits.Remove(row);
+            return;
 
-        RebuildMixedItems();
+        NewSplits.Remove(row);
     }
 
-    // ===== Helpers =====
-
-    void CloseAllEdits()
+    // ===============================
+    // SAVE
+    // ===============================
+    public async Task SaveAsync()
     {
-        foreach (var r in MixedItems)
-            r.IsEditing = false;
-    }
+        var draft = SplitMapper.ToErpDraft(
+            OriginalBarcode,
+            NewSplits);
 
-    void RebuildMixedItems()
-    {
-        MixedItems.Clear();
+        draft.OriginalBarcode = Original.Barcode;
 
-        foreach (var n in NewSplits)
-            MixedItems.Add(n);
 
-        foreach (var e in ExistingSplits)
-            MixedItems.Add(e);
+        // 🔴 EN BAŞTA: her şeyi kapat
+        HasOriginalBarcode = false;
+        Original = null;
+        _loadedModel = null;
 
-        OnPropertyChanged(nameof(TotalBarcodeCount));
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
-    public async Task LoadFromErpAsync(
-    ErpBarcodeDetailDto dto)
-    {
-        // 1) Original
-        SetOriginal(new SplitRowVm
-        {
-            IsExisting = false,
-            ItemCode = dto.ItemCode,
-            ItemName = dto.ItemName,
-            LotCode = dto.LotCode,
-            ColorCode = dto.ColorCode,
-            UnitCode = dto.UnitCode,
-            Quantity = dto.Quantity
-        });
-
-        // 2) Eski splitler
         ExistingSplits.Clear();
-
-        foreach (var s in dto.ExistingSplits)
-        {
-            ExistingSplits.Add(new SplitRowVm
-            {
-                IsExisting = true,
-                ItemCode = s.ItemCode,
-                ItemName = s.ItemName,
-                LotCode = s.LotCode,
-                ColorCode = s.ColorCode,
-                UnitCode = s.UnitCode,
-                Quantity = s.Quantity
-            });
-        }
-
         NewSplits.Clear();
-        RebuildMixedItems();
-    }
 
-}
+        OnPropertyChanged(nameof(Original));
+        OnPropertyChanged(nameof(OriginalLine2));
+        OnPropertyChanged(nameof(MixedItems));
 
-public class SplitRowVm : INotifyPropertyChanged
-{
-    // ===== State =====
-    public bool IsExisting { get; set; }
+        SplitBarcodeModel model;
 
-    bool _isEditing;
-    public bool IsEditing
-    {
-        get => _isEditing;
-        set
+        try
         {
-            if (_isEditing == value) return;
-            _isEditing = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(IsNewAndNotEditing));
+            model = await _service.SaveAsync(draft);
         }
+        catch
+        {
+            // barkod bulunamadı → UI kapalı kalır
+            return;
+        }
+
+        if (model == null)
+            return;
+
+        // ✅ SADECE BAŞARILIYSA
+        _loadedModel = model;
+        Original = SplitMapper.ToVm(model, true);
+        HasOriginalBarcode = true;
+
+        OnPropertyChanged(nameof(Original));
+        OnPropertyChanged(nameof(OriginalLine2));
+
+        foreach (var e in model.ExistingSplits)
+            ExistingSplits.Add(SplitMapper.ToVm(e, true));
     }
-
-    public bool IsNewAndNotEditing => !IsExisting && !IsEditing;
-
-    // ===== Data =====
-    public string ItemCode { get; set; } = "";
-    public string ItemName { get; set; } = "";  
-    public string LotCode { get; set; } = "";
-    public string ColorCode { get; set; } = "";
-    public string UnitCode { get; set; } = "";
-    public decimal Quantity { get; set; }
-
-    // ===== ERP Seçim Listeleri =====
-    public IList<string> StockList { get; set; } = new List<string>();
-    public IList<string> LotList { get; set; } = new List<string>();
-    public IList<string> ColorList { get; set; } = new List<string>();
-    public IList<string> UnitList { get; set; } = new List<string>();
-
-    // ===== Liste görünümü =====
-    public string SummaryLine =>
-        $"{ItemCode} · {ItemName} · {LotCode} · {ColorCode} · {UnitCode} · {Quantity}";
 
     public event PropertyChangedEventHandler? PropertyChanged;
     void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
-
-

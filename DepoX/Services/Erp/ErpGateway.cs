@@ -97,6 +97,8 @@ namespace DepoX.Services.Erp
                 cancellationToken);
         }
 
+        #region Split
+
         public async Task<ErpResult<ErpBarcodeDetailDto>> GetBarcodeDetailAsync(
             string barcode,
             CancellationToken cancellationToken = default)
@@ -109,6 +111,21 @@ namespace DepoX.Services.Erp
                 new { barcode },
                 cancellationToken);
         }
+
+        public async Task<ErpResult<ErpBarcodeDetailDto>> SaveSplitAsync(
+           SplitDraft request,
+           CancellationToken cancellationToken = default)
+        {
+            var url =
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveBarcodeSplit";
+
+            return await PostAsync<ErpBarcodeDetailDto>(
+                url,
+                new { draft = request },
+                cancellationToken);
+        }
+
+        #endregion Split
 
     }
 }

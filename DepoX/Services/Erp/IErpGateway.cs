@@ -9,9 +9,16 @@ namespace DepoX.Services.Erp
             ErpBasketDraft draft,
             CancellationToken cancellationToken = default);
 
+        #region Split
         Task<ErpResult<ErpBarcodeDetailDto>> GetBarcodeDetailAsync(
             string barcode,
             CancellationToken cancellationToken = default);
+
+        Task<ErpResult<ErpBarcodeDetailDto>> SaveSplitAsync(
+            SplitDraft request,
+            CancellationToken cancellationToken = default);
+
+        #endregion Split
 
     }
 

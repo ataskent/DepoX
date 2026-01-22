@@ -32,6 +32,10 @@ public class ErpBarcodeDetailDto
     public string UnitCode { get; set; } = "";
     public decimal Quantity { get; set; }
 
+    public List<string> AvailableLots { get; set; } = new();
+    public List<string> AvailableColors { get; set; } = new();
+    public List<string> AvailableUnits { get; set; } = new();
+
     public List<ErpSplitBarcodeDto> ExistingSplits { get; set; } = new();
 }
 
