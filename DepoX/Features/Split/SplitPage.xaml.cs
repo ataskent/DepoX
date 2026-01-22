@@ -20,14 +20,9 @@ public partial class SplitPage : ContentPage
         if (string.IsNullOrEmpty(barcode))
             return;
 
-        try
-        {
-            await _vm.LoadAsync(barcode);
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Hata", ex.Message, "Tamam");
-        }
+        await _vm.LoadAsync(barcode);
+
+        await ShowMessagesAsync();
     }
 
     private void OnAddSplitClicked(object sender, EventArgs e)
@@ -39,20 +34,6 @@ public partial class SplitPage : ContentPage
     private void OnCancelDraft(object sender, EventArgs e)
         => _vm.CancelDraft();
 
-    //private void OnEditSwipe(object sender, EventArgs e)
-    //{
-    //    if (sender is SwipeItem swipe &&
-    //        swipe.CommandParameter is SplitRowVm row)
-    //        _vm.Edit(row);
-    //}
-
-    //private void OnEditDone(object sender, EventArgs e)
-    //{
-    //    if (sender is Button btn &&
-    //        btn.CommandParameter is SplitRowVm row)
-    //        _vm.FinishEdit(row);
-    //}
-
     private void OnSwipeDelete(object sender, EventArgs e)
     {
         if (sender is SwipeItem swipe &&
@@ -62,18 +43,25 @@ public partial class SplitPage : ContentPage
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
-        try
+        await _vm.SaveAsync();
+        await ShowMessagesAsync();
+    }
+
+    // ===============================
+    // UI MESSAGE HANDLING
+    // ===============================
+
+    private async Task ShowMessagesAsync()
+    {
+        if (_vm.HasError)
         {
-            await _vm.SaveAsync();
-
-            await DisplayAlert("Başarılı", "Barkod parçalama kaydedildi.", "Tamam");
-
-            if (!string.IsNullOrEmpty(_vm.OriginalBarcode))
-                await _vm.LoadAsync(_vm.OriginalBarcode);
+            await DisplayAlert("Hata", _vm.ErrorMessage!, "Tamam");
+            return;
         }
-        catch (Exception ex)
+
+        if (_vm.HasInfo)
         {
-            await DisplayAlert("Hata", ex.Message, "Tamam");
+            await DisplayAlert("Bilgi", _vm.InfoMessage!, "Tamam");
         }
     }
 }

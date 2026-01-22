@@ -12,40 +12,77 @@ public class SplitService : ISplitService
         _erp = erp;
     }
 
-    public async Task<SplitBarcodeModel> GetBarcodeAsync(
+    public async Task<ServiceResult<SplitBarcodeModel>> GetBarcodeAsync(
         string barcode,
         CancellationToken cancellationToken = default)
     {
-        var result = await _erp.GetBarcodeDetailAsync(barcode, cancellationToken);
+        if (string.IsNullOrWhiteSpace(barcode))
+            return ServiceResult<SplitBarcodeModel>.Fail("Barkod boş olamaz.");
 
-        if (!result.Success || result.Data == null)
-            throw new Exception(result.Message ?? "ERP barkod bilgisi alınamadı.");
+        try
+        {
+            var result = await _erp.GetBarcodeDetailAsync(barcode.Trim(), cancellationToken);
 
-        return SplitMapper.ToModel(result.Data);
+            if (!result.Success || result.Data == null)
+                return ServiceResult<SplitBarcodeModel>.Fail(
+                    result.Message ?? "ERP barkod bilgisi alınamadı.");
+
+            var model = SplitMapper.ToModel(result.Data);
+            return ServiceResult<SplitBarcodeModel>.Ok(model);
+        }
+        catch (OperationCanceledException)
+        {
+            return ServiceResult<SplitBarcodeModel>.Fail("İşlem iptal edildi.", "CANCELED");
+        }
+        catch (Exception ex)
+        {
+            // İstersen buraya log da ekleriz (ILogger vs)
+            return ServiceResult<SplitBarcodeModel>.Fail(ex.Message, "UNHANDLED");
+        }
     }
 
-    public async Task<SplitBarcodeModel> SaveAsync(
+    public async Task<ServiceResult<SplitBarcodeModel>> SaveAsync(
         SplitDraft draft,
         CancellationToken cancellationToken = default)
-    {        
-        if (!draft.NewBarcodes.Any())
-            return new SplitBarcodeModel();
-        var result = await _erp.SaveSplitAsync(draft, cancellationToken);
+    {
+        if (draft == null)
+            return ServiceResult<SplitBarcodeModel>.Fail("Kaydetme isteği (draft) boş olamaz.");
 
-        if (!result.Success || result.Data == null)
-            throw new Exception(result.Message ?? "Barkod bölme işlemi tamamlanamadı.");
+        if (string.IsNullOrWhiteSpace(draft.OriginalBarcode))
+            return ServiceResult<SplitBarcodeModel>.Fail("Orijinal barkod boş olamaz.");
 
-        return SplitMapper.ToModel(result.Data);
+        if (draft.NewBarcodes == null || draft.NewBarcodes.Count == 0)
+            return ServiceResult<SplitBarcodeModel>.Fail("Kaydedilecek yeni barkod bulunamadı.");
+
+        try
+        {
+            var result = await _erp.SaveSplitAsync(draft, cancellationToken);
+
+            if (!result.Success || result.Data == null)
+                return ServiceResult<SplitBarcodeModel>.Fail(
+                    result.Message ?? "Barkod bölme işlemi tamamlanamadı.");
+
+            var model = SplitMapper.ToModel(result.Data);
+            return ServiceResult<SplitBarcodeModel>.Ok(model, "Barkod bölme kaydedildi.");
+        }
+        catch (OperationCanceledException)
+        {
+            return ServiceResult<SplitBarcodeModel>.Fail("İşlem iptal edildi.", "CANCELED");
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<SplitBarcodeModel>.Fail(ex.Message, "UNHANDLED");
+        }
     }
 }
 
 public interface ISplitService
 {
-    Task<SplitBarcodeModel> GetBarcodeAsync(
+    Task<ServiceResult<SplitBarcodeModel>> GetBarcodeAsync(
         string barcode,
         CancellationToken cancellationToken = default);
 
-    Task<SplitBarcodeModel> SaveAsync(
+    Task<ServiceResult<SplitBarcodeModel>> SaveAsync(
         SplitDraft draft,
         CancellationToken cancellationToken = default);
 }
