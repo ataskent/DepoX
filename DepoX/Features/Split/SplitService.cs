@@ -74,6 +74,48 @@ public class SplitService : ISplitService
             return ServiceResult<SplitBarcodeModel>.Fail(ex.Message, "UNHANDLED");
         }
     }
+
+    public async Task<ServiceResult<SplitBarcodeModel>> CreateNewBarcodeAsync(
+        SplitNewBarcodeDraft draft,
+        CancellationToken cancellationToken = default)
+    {
+        if (draft == null)
+            return ServiceResult<SplitBarcodeModel>.Fail("Kaydetme isteği (draft) boş olamaz.");
+
+        if (string.IsNullOrWhiteSpace(draft.ItemCode))
+            return ServiceResult<SplitBarcodeModel>.Fail("Stok kodu boş olamaz.");
+
+        if (draft.Quantity <= 0)
+            return ServiceResult<SplitBarcodeModel>.Fail("Miktar 0 veya negatif olamaz.");
+
+        if (string.IsNullOrWhiteSpace(draft.UnitCode))
+        {
+            return ServiceResult<SplitBarcodeModel>.Fail("Birim kodu boş olamaz.");
+        }
+
+        try
+        {
+            var result = await _erp.CreateBarcodeAsync(draft, cancellationToken);
+
+            if (!result.Success || result.Data == null)
+                return ServiceResult<SplitBarcodeModel>.Fail(
+                    result.Message ?? "Barkod kaydetme işlemi tamamlanamadı.");
+
+            var model = SplitMapper.ToModel(result.Data);
+            return ServiceResult<SplitBarcodeModel>.Ok(model, "Barkod kaydedildi.");
+        }
+        catch (OperationCanceledException)
+        {
+            return ServiceResult<SplitBarcodeModel>.Fail("İşlem iptal edildi.", "CANCELED");
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<SplitBarcodeModel>.Fail(ex.Message, "UNHANDLED");
+        }
+    }
+
+ 
+
 }
 
 public interface ISplitService
@@ -85,4 +127,8 @@ public interface ISplitService
     Task<ServiceResult<SplitBarcodeModel>> SaveAsync(
         SplitDraft draft,
         CancellationToken cancellationToken = default);
+
+    Task<ServiceResult<SplitBarcodeModel>> CreateNewBarcodeAsync(SplitNewBarcodeDraft draft,
+        CancellationToken cancellationToken = default);
+
 }

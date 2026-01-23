@@ -124,6 +124,18 @@ namespace DepoX.Services.Erp
                 new { draft = request },
                 cancellationToken);
         }
+        public async Task<ErpResult<ErpBarcodeDetailDto>> CreateBarcodeAsync(
+            SplitNewBarcodeDraft request,
+            CancellationToken cancellationToken = default)
+        {
+            var url =
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/CreateBarcode";
+
+            return await PostAsync<ErpBarcodeDetailDto>(
+                url,
+                new { draft = request },
+                cancellationToken);
+        }
 
         #endregion Split
 

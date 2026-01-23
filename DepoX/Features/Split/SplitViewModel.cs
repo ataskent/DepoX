@@ -1,4 +1,4 @@
-ï»¿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -28,6 +28,53 @@ public class SplitViewModel : INotifyPropertyChanged
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
     public bool HasInfo => !string.IsNullOrWhiteSpace(InfoMessage);
 
+    public async Task CreateNewBarcodeAsync()
+    {
+        ClearMessages();
+
+        if (DraftRow == null)
+        {
+            SetError("Kaydedilecek bir barkod yok.");
+            return;
+        }
+
+        if (DraftRow.Quantity <= 0)
+        {
+            SetError("Miktar 0 veya negatif olamaz.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(DraftRow.ItemCode))
+        {
+            SetError("Stok kodu boþ olamaz.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(DraftRow.UnitCode))
+        {
+            SetError("Birim kodu boþ olamaz.");
+            return;
+        }
+
+        var draft = SplitMapper.ToNewBarcodeDraft(DraftRow);
+
+        var result = await _service.CreateNewBarcodeAsync(draft);
+
+        if (!result.Success)
+        {
+            SetError(result.Message ?? "Kaydetme iþlemi baþarýsýz.");
+            return;
+        }
+
+        // Close draft
+        DraftRow = null;
+        OnPropertyChanged(nameof(DraftRow));
+        OnPropertyChanged(nameof(IsDraftOpen));
+
+        // Show success message
+        SetInfo(result.Message ?? "Ýþlem baþarýyla tamamlandý.");
+    }
+
     void SetError(string message)
     {
         ErrorMessage = message;
@@ -56,6 +103,13 @@ public class SplitViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(HasInfo));
     }
 
+    public DraftMode CurrentDraftMode { get; set; }
+    public string DraftTitle =>
+    CurrentDraftMode == DraftMode.Split
+        ? "Barkod Böl"
+        : "Yeni Barkod Oluþtur";
+
+
     // ===============================
     // DATA
     // ===============================
@@ -79,7 +133,7 @@ public class SplitViewModel : INotifyPropertyChanged
     public string OriginalLine2 =>
         Original == null
             ? ""
-            : $"Parti: {Original.LotCode} Â· Renk: {Original.ColorCode} Â· Miktar: {Original.Quantity} {Original.UnitCode}";
+            : $"Parti: {Original.LotCode} · Renk: {Original.ColorCode} · Miktar: {Original.Quantity} {Original.UnitCode}";
 
     public ObservableCollection<SplitRowVm> ExistingSplits { get; } = new();
     public ObservableCollection<SplitRowVm> NewSplits { get; } = new();
@@ -123,7 +177,7 @@ public class SplitViewModel : INotifyPropertyChanged
 
         if (!result.Success)
         {
-            SetError(result.Message ?? "Barkod bilgisi alÄ±namadÄ±.");
+            SetError(result.Message ?? "Barkod bilgisi alýnamadý.");
             return;
         }
 
@@ -144,10 +198,27 @@ public class SplitViewModel : INotifyPropertyChanged
     // NEW SPLIT
     // ===============================
 
+    public void StartNewBarcode()
+    {
+        CurrentDraftMode = DraftMode.NewBarcode;
+
+        DraftRow = new SplitRowVm
+        {
+            Quantity = 1
+        };
+
+        OnPropertyChanged(nameof(CurrentDraftMode));
+        OnPropertyChanged(nameof(DraftRow));
+        OnPropertyChanged(nameof(IsDraftOpen));
+        OnPropertyChanged(nameof(DraftTitle));
+    }
+
     public void StartNewSplit()
     {
         if (Original == null || _loadedModel == null)
             return;
+
+        CurrentDraftMode = DraftMode.Split;
 
         DraftRow = new SplitRowVm
         {
@@ -165,8 +236,10 @@ public class SplitViewModel : INotifyPropertyChanged
             UnitList = new List<string> { "" }.Concat(_loadedModel.AvailableUnits).ToList()
         };
 
+        OnPropertyChanged(nameof(CurrentDraftMode));
         OnPropertyChanged(nameof(DraftRow));
         OnPropertyChanged(nameof(IsDraftOpen));
+        OnPropertyChanged(nameof(DraftTitle));
     }
 
     public void ConfirmDraft()
@@ -188,7 +261,7 @@ public class SplitViewModel : INotifyPropertyChanged
 
         if (sameAsOriginal)
         {
-            SetError("Orijinal barkod ile birebir aynÄ± kayÄ±t eklenemez.");
+            SetError("Orijinal barkod ile birebir ayný kayýt eklenemez.");
             return;
         }
 
@@ -253,17 +326,16 @@ public class SplitViewModel : INotifyPropertyChanged
 
         if (!result.Success)
         {
-            SetError(result.Message ?? "Kaydetme iÅŸlemi baÅŸarÄ±sÄ±z.");
+            SetError(result.Message ?? "Kaydetme iþlemi baþarýsýz.");
             return;
         }
 
-        // ðŸ”„ Ã–NCE reload
+        // ?? ÖNCE reload
         await LoadAsync(Original.Barcode);
 
-        // âœ… EN SON baÅŸarÄ± mesajÄ±
-        SetInfo(result.Message ?? "Ä°ÅŸlem baÅŸarÄ±yla tamamlandÄ±.");
+        // ? EN SON baþarý mesajý
+        SetInfo(result.Message ?? "Ýþlem baþarýyla tamamlandý.");
     }
-
 
     // ===============================
     // HELPERS
@@ -286,4 +358,10 @@ public class SplitViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
     void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+}
+
+public enum DraftMode
+{
+    Split,
+    NewBarcode
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -64,7 +64,7 @@
         <!-- ========================= -->
         <Button
             Grid.Row="2"
-            Text="Barkod Böl"
+            Text="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DraftTitle}"
             IsVisible="{Binding HasOriginalBarcode}"
             Clicked="OnAddSplitClicked"
             Margin="0,4" />
@@ -181,7 +181,7 @@
                     Spacing="10">
 
                     <Label
-                        Text="Barkod Böl"
+                        Text="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DraftTitle}"
                         FontAttributes="Bold"
                         FontSize="16" />
 

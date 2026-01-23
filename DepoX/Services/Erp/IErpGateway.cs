@@ -16,6 +16,10 @@ namespace DepoX.Services.Erp
 
         Task<ErpResult<ErpBarcodeDetailDto>> SaveSplitAsync(
             SplitDraft request,
+            CancellationToken cancellationToken = default); 
+
+        Task<ErpResult<ErpBarcodeDetailDto>> CreateBarcodeAsync(
+            SplitNewBarcodeDraft request,
             CancellationToken cancellationToken = default);
 
         #endregion Split
