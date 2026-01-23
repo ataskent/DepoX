@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using DepoX.Services.Erp.Dtos;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -6,6 +8,8 @@ namespace DepoX.Features.Split;
 
 public class SplitRowVm : INotifyPropertyChanged
 {
+    public bool IsNewBarcodeMode { get; set; }
+
     public bool IsExisting { get; set; }
 
     bool _isEditing;
@@ -20,11 +24,75 @@ public class SplitRowVm : INotifyPropertyChanged
             OnPropertyChanged(nameof(IsNewAndNotEditing));
         }
     }
-   
+
+    string _newBarcode = "";
+    public string NewBarcode
+    {
+        get => _newBarcode;
+        set
+        {
+            _newBarcode = value;
+            OnPropertyChanged();
+        }
+    }
+    public bool HasNewBarcode =>
+        !string.IsNullOrWhiteSpace(NewBarcode);
 
     public ICommand ClearLotCommand => new Command(() => LotCode = "");
     public ICommand ClearColorCommand => new Command(() => ColorCode = "");
     public ICommand ClearUnitCommand => new Command(() => UnitCode = "");
+
+    string _itemSearchText = "";
+
+    public string ItemSearchText
+    {
+        get => _itemSearchText;
+        set
+        {
+            _itemSearchText = value;
+            FilterItems();
+            OnPropertyChanged();
+        }
+    }
+
+    public string ItemDisplay =>
+    SelectedItem == null ? "" : $"{SelectedItem.Name}";
+
+
+    public List<ItemMetaDto> ItemList { get; set; } = new();
+    public ObservableCollection<ItemMetaDto> FilteredItemList { get; } = new();
+
+    ItemMetaDto? _selectedItem;
+    public ItemMetaDto? SelectedItem
+    {
+        get => _selectedItem;
+        set
+        {
+            _selectedItem = value;
+            ItemCode = value?.Code ?? "";
+
+            OnPropertyChanged(); // SelectedItem
+            OnPropertyChanged(nameof(ItemDisplay)); // 🔥 BUNU EKLE
+        }
+    }
+
+
+    void FilterItems()
+    {
+        FilteredItemList.Clear();
+
+        IEnumerable<ItemMetaDto> query =
+            string.IsNullOrWhiteSpace(ItemSearchText)
+                ? ItemList
+                : ItemList.Where(x =>
+                    x.Code.Contains(ItemSearchText, StringComparison.OrdinalIgnoreCase) ||
+                    x.Name.Contains(ItemSearchText, StringComparison.OrdinalIgnoreCase));
+
+        // 🔥 Performans için sınır
+        foreach (var item in query.Take(50))
+            FilteredItemList.Add(item);
+    }
+
 
 
     // ✅ XAML BUNU KULLANIYOR
@@ -34,7 +102,17 @@ public class SplitRowVm : INotifyPropertyChanged
     public string ItemCode
     {
         get => _itemCode;
-        set { if (_itemCode == value) return; _itemCode = value; OnPropertyChanged(); OnPropertyChanged(nameof(SummaryLine)); }
+        set
+        {
+            if (_itemCode == value) return;
+            _itemCode = value;
+
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(SummaryLine));
+
+            // 🔥 KRİTİK
+            OnItemChanged?.Invoke(_itemCode);
+        }
     }
 
     string _itemName = "";
@@ -92,16 +170,19 @@ public class SplitRowVm : INotifyPropertyChanged
     }
 
     // seçim listeleri
-    public IList<string> StockList { get; set; } = new List<string>();
+    //public IList<string> ItemList { get; set; } = new List<string>();
     public IList<string> LotList { get; set; } = new List<string>();
     public IList<string> ColorList { get; set; } = new List<string>();
     public IList<string> UnitList { get; set; } = new List<string>();
+
 
     // ✅ XAML BUNU KULLANIYOR
     public string SummaryLine =>
         $"Parti: {LotCode}  - Renk : {ColorCode}  - Miktar : {Quantity} {UnitCode}";
 
     public event PropertyChangedEventHandler? PropertyChanged;
-    void OnPropertyChanged([CallerMemberName] string? name = null)
+    public void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    public Action<string>? OnItemChanged { get; set; }
 }

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 
 namespace DepoX.Services.Erp
 {
@@ -136,6 +137,27 @@ namespace DepoX.Services.Erp
                 new { draft = request },
                 cancellationToken);
         }
+
+        // ===============================
+        // YENİ BARKOD META
+        // ===============================
+
+        public Task<ErpResult<NewBarcodeMetaDto>> GetNewBarcodeMetaAsync(
+            CancellationToken cancellationToken = default)
+            => PostAsync<NewBarcodeMetaDto>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetNewBarcodeMeta",
+                new { }, cancellationToken);
+
+        // ===============================
+        // LOT BY ITEM
+        // ===============================
+
+        public Task<ErpResult<List<string>>> GetLotsByItemAsync(
+            string itemCode,
+            CancellationToken cancellationToken = default)
+            => PostAsync<List<string>>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetLotsByItem",
+                new { itemCode }, cancellationToken);
 
         #endregion Split
 

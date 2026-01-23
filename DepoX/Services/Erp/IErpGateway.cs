@@ -22,6 +22,13 @@ namespace DepoX.Services.Erp
             SplitNewBarcodeDraft request,
             CancellationToken cancellationToken = default);
 
+        Task<ErpResult<NewBarcodeMetaDto>> GetNewBarcodeMetaAsync(
+       CancellationToken cancellationToken = default);
+
+        Task<ErpResult<List<string>>> GetLotsByItemAsync(
+            string itemCode,
+            CancellationToken cancellationToken = default);
+
         #endregion Split
 
     }

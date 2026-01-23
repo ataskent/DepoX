@@ -1,5 +1,332 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
+    x:Name="RootPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="DepoX.Features.Split.SplitPage"
+    Title="Barkod Bölme">
+
+  <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
+        Padding="10"
+        RowSpacing="8">
+
+    <!-- ================================================= -->
+    <!-- 1) Barkod Okuma + Yeni Barkod -->
+    <!-- ================================================= -->
+    <Grid Grid.Row="0"
+          ColumnDefinitions="*,Auto"
+          ColumnSpacing="8">
+
+      <Entry
+          Grid.Column="0"
+          x:Name="BarcodeEntry"
+          Placeholder="Barkod okutun"
+          ReturnType="Done"
+          Completed="OnBarcodeCompleted" />
+
+      <Button
+          Grid.Column="1"
+          Text="Yeni Barkod"
+          Padding="12,0"
+          Clicked="OnNewBarcodeClicked" />
+    </Grid>
+
+    <!-- ================================================= -->
+    <!-- 2) Okutulan Barkod Özeti -->
+    <!-- ================================================= -->
+    <VerticalStackLayout
+        Grid.Row="1"
+        IsVisible="{Binding HasOriginalBarcode}"
+        Spacing="2">
+
+      <Label Text="{Binding Original.Barcode}"
+             TextColor="DarkRed"
+             FontAttributes="Bold"
+             FontSize="14" />
+
+      <Label Text="{Binding Original.ItemCode}"
+             FontAttributes="Bold"
+             FontSize="14" />
+
+      <Label Text="{Binding Original.ItemName}"
+             FontAttributes="Bold"
+             FontSize="12" />
+
+      <Label Text="{Binding OriginalLine2}"
+             FontSize="12"
+             TextColor="#64748B" />
+
+      <BoxView HeightRequest="1"
+               Color="#E5E7EB"
+               Margin="0,4" />
+    </VerticalStackLayout>
+
+    <!-- ================================================= -->
+    <!-- 3) Barkod Böl -->
+    <!-- ================================================= -->
+    <Button
+        Grid.Row="2"
+        Text="Barkod Böl"
+        IsVisible="{Binding HasOriginalBarcode}"
+        Clicked="OnAddSplitClicked"
+        Margin="0,4" />
+
+    <!-- ================================================= -->
+    <!-- 4) Liste -->
+    <!-- ================================================= -->
+    <CollectionView
+        Grid.Row="3"
+        ItemsSource="{Binding MixedItems}"
+        SelectionMode="None">
+
+      <CollectionView.ItemTemplate>
+        <DataTemplate>
+          <Grid>
+
+            <!-- Yeni Split -->
+            <SwipeView IsVisible="{Binding IsNewAndNotEditing}">
+              <SwipeView.RightItems>
+                <SwipeItems Mode="Reveal">
+                  <SwipeItem
+                      Text="Sil"
+                      BackgroundColor="Tomato"
+                      Invoked="OnSwipeDelete"
+                      CommandParameter="{Binding .}" />
+                </SwipeItems>
+              </SwipeView.RightItems>
+
+              <Grid Padding="6"
+                    BackgroundColor="#ECFEFF">
+                <Label Text="{Binding SummaryLine}"
+                       FontSize="15"
+                       TextColor="#0F172A" />
+              </Grid>
+            </SwipeView>
+
+            <!-- Eski Split -->
+            <Grid IsVisible="{Binding IsExisting}"
+                  Padding="6"
+                  BackgroundColor="#F8FAFC"
+                  Opacity="0.8">
+              <VerticalStackLayout Spacing="2">
+                <Label Text="{Binding Barcode}"
+                       FontSize="14"
+                       TextColor="DarkRed" />
+                <Label Text="{Binding SummaryLine}"
+                       FontSize="12"
+                       TextColor="#475569" />
+              </VerticalStackLayout>
+            </Grid>
+
+          </Grid>
+        </DataTemplate>
+      </CollectionView.ItemTemplate>
+    </CollectionView>
+
+    <!-- ================================================= -->
+    <!-- 5) Alt Bar -->
+    <!-- ================================================= -->
+    <Grid Grid.Row="4"
+          ColumnDefinitions="*"
+          Padding="6">
+
+      <Button
+          IsVisible="{Binding ShowBottomSaveButton}"
+          Text="Kaydet"
+          Clicked="OnSaveClicked" />
+    </Grid>
+
+    <!-- ================================================= -->
+    <!-- ANA DRAFT POPUP -->
+    <!-- ================================================= -->
+    <Grid Grid.RowSpan="5"
+          IsVisible="{Binding IsDraftOpen}"
+          BackgroundColor="#80000000"
+          Padding="20">
+
+      <Border BackgroundColor="White"
+              StrokeShape="RoundRectangle 12"
+              Padding="16"
+              VerticalOptions="Center">
+
+        <VerticalStackLayout
+            BindingContext="{Binding DraftRow}"
+            Spacing="10">
+
+          <Label Text="{Binding DraftTitle}"
+                 IsVisible="{Binding IsDraftOpen}"
+                 FontAttributes="Bold"
+                 FontSize="16" />
+          <VerticalStackLayout
+              IsVisible="{Binding IsNewBarcodeMode}">
+
+
+            <Label Text="Barkod" />
+            <Entry Text="{Binding NewBarcode}"
+                   Placeholder="Yeni barkod numarası girin"/>
+
+            <Label Text="Stok" />
+            <Grid ColumnDefinitions="*,Auto">
+              <Entry Text="{Binding ItemDisplay}"
+                     Placeholder="Stok seçiniz"
+                     IsReadOnly="True"/>
+              <Button Text="Seç"
+                      Grid.Column="1"
+                      Clicked="OnOpenItemPicker"/>
+            </Grid>
+          </VerticalStackLayout>
+
+
+          <!--<Label
+              Text="Barkod"
+              FontSize="12"
+              TextColor="#64748B"
+              IsVisible="{Binding IsNewBarcodeMode}"  />
+
+          <Entry
+              Placeholder="Yeni barkod numarası girin"
+              Text="{Binding NewBarcode}"
+              IsVisible="{Binding IsNewBarcodeMode}"
+              Keyboard="Default"
+              ReturnType="Next" />
+
+          --><!-- STOK (SADECE GÖSTERİM) --><!--
+          <Label Text="Stok"
+                 FontSize="12"
+                 TextColor="#64748B"
+                 IsVisible="{Binding IsNewBarcodeMode}" />
+
+          <Grid ColumnDefinitions="*,Auto"
+                IsVisible="{Binding IsNewBarcodeMode}"
+                ColumnSpacing="6">
+            <Entry
+                Grid.Column="0"
+                Text="{Binding ItemDisplay}"
+                Placeholder="Stok seçiniz"
+                IsReadOnly="True" />
+
+            <Button
+                Grid.Column="1"
+                Text="Seç"
+                Clicked="OnOpenItemPicker" />
+          </Grid>-->
+
+          <!-- PARTİ -->
+          <Picker
+              Title="Parti"
+              ItemsSource="{Binding LotList}"
+              SelectedItem="{Binding LotCode}" />
+
+          <!-- RENK -->
+          <Picker
+              Title="Renk"
+              ItemsSource="{Binding ColorList}"
+              SelectedItem="{Binding ColorCode}" />
+
+          <!-- MİKTAR -->
+          <Label Text="Miktar" FontSize="12" ></Label>
+
+          <Grid ColumnDefinitions="*,*"
+                ColumnSpacing="6">
+            <Entry
+                Grid.Column="0"
+                Placeholder="Miktar"
+                Keyboard="Numeric"
+                Text="{Binding Quantity}" />
+
+            <!-- BİRİM -->
+            <Picker
+                Grid.Column="1"
+                ItemsSource="{Binding UnitList}"
+                SelectedItem="{Binding UnitCode}" />
+          </Grid>
+
+          <Grid ColumnDefinitions="*,*"
+                ColumnSpacing="10">
+
+            <Button Text="Vazgeç"
+                    BackgroundColor="#E5E7EB"
+                    TextColor="Black"
+                    Clicked="OnCancelDraft" />
+
+            <Button Grid.Column="1"
+                    Text="Tamam"
+                    BackgroundColor="#38BDF8"
+                    TextColor="White"
+                    Clicked="OnConfirmDraft" />
+          </Grid>
+
+        </VerticalStackLayout>
+      </Border>
+    </Grid>
+
+    <!-- ================================================= -->
+    <!-- STOK SEÇ POPUP (AYRI) -->
+    <!-- ================================================= -->
+    <Grid Grid.RowSpan="5"
+          IsVisible="{Binding IsItemPickerOpen}"
+          BackgroundColor="#80000000"
+          Padding="20">
+
+      <Border BackgroundColor="White"
+              StrokeShape="RoundRectangle 12"
+              Padding="16"
+              WidthRequest="500"
+              HeightRequest="500"
+              VerticalOptions="Center"
+              HorizontalOptions="Center">
+
+        <!-- Grid ile sabit + scroll alan ayırıyoruz -->
+        <Grid RowDefinitions="Auto,Auto,*,Auto"
+              RowSpacing="10">
+
+          <!-- Başlık -->
+          <Label Grid.Row="0"
+                 Text="Stok Seç"
+                 FontAttributes="Bold"
+                 FontSize="16" />
+
+          <!-- Arama -->
+          <Entry Grid.Row="1"
+                 Placeholder="Ara (kod veya ad)"
+                 Text="{Binding DraftRow.ItemSearchText}" />
+
+          <!-- SCROLL EDEN ALAN -->
+          <CollectionView Grid.Row="2"
+                          ItemsSource="{Binding DraftRow.FilteredItemList}"
+                          SelectionMode="Single"
+                          SelectionChanged="OnItemPicked">
+
+            <CollectionView.ItemTemplate>
+              <DataTemplate>
+                <VerticalStackLayout Padding="8">
+                  <Label Text="{Binding Code}"
+                         FontAttributes="Bold" />
+                  <Label Text="{Binding Name}"
+                         FontSize="12"
+                         TextColor="#64748B" />
+                </VerticalStackLayout>
+              </DataTemplate>
+            </CollectionView.ItemTemplate>
+          </CollectionView>
+
+          <!-- Alt Buton -->
+          <Button Grid.Row="3"
+                  Text="Kapat"
+                  Clicked="OnCloseItemPicker" />
+
+        </Grid>
+      </Border>
+    </Grid>
+
+
+  </Grid>
+</ContentPage>
+
+
+<!--<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Name="RootPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="DepoX.Features.Split.SplitPage"
@@ -9,69 +336,70 @@
           Padding="10"
           RowSpacing="8">
 
-        <!-- ========================= -->
-        <!-- 1) Barkod Okuma -->
-        <!-- ========================= -->
-        <Entry
-            Grid.Row="0"
-            x:Name="BarcodeEntry"
-            Placeholder="Barkod okutun"
-            ReturnType="Done"
-            Completed="OnBarcodeCompleted" />
+        --><!-- ================================================= --><!--
+        --><!-- 1) Barkod Okuma + Yeni Barkod --><!--
+        --><!-- ================================================= --><!--
+        <Grid Grid.Row="0"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="8">
 
-        <!-- ========================= -->
-        <!-- 2) Okutulan Barkod Özeti -->
-        <!-- ========================= -->
-        
-        <!---->
+            <Entry
+                Grid.Column="0"
+                x:Name="BarcodeEntry"
+                Placeholder="Barkod okutun"
+                ReturnType="Done"
+                Completed="OnBarcodeCompleted" />
+
+            <Button
+                Grid.Column="1"
+                Text="Yeni Barkod"
+                Padding="12,0"
+                Clicked="OnNewBarcodeClicked" />
+        </Grid>
+
+        --><!-- ================================================= --><!--
+        --><!-- 2) Okutulan Barkod Özeti --><!--
+        --><!-- ================================================= --><!--
         <VerticalStackLayout
             Grid.Row="1"
             IsVisible="{Binding HasOriginalBarcode}"
             Spacing="2">
 
-            <Label
-               Text="{Binding Original.Barcode}"
-               TextColor="DarkRed"
-               FontAttributes="Bold"
-               FontSize="14" />
+            <Label Text="{Binding Original.Barcode}"
+                   TextColor="DarkRed"
+                   FontAttributes="Bold"
+                   FontSize="14" />
 
-            <Label
-                Text="{Binding Original.ItemCode}"
-                FontAttributes="Bold"
-                FontSize="14" />
+            <Label Text="{Binding Original.ItemCode}"
+                   FontAttributes="Bold"
+                   FontSize="14" />
 
-            <Label
-                 Text="{Binding Original.ItemName}"
-                 FontAttributes="Bold"
-                 FontSize="12" />
+            <Label Text="{Binding Original.ItemName}"
+                   FontAttributes="Bold"
+                   FontSize="12" />
 
-            <Label
-                Text="{Binding OriginalLine2}"
-                FontSize="12"
-                TextColor="#64748B" />
+            <Label Text="{Binding OriginalLine2}"
+                   FontSize="12"
+                   TextColor="#64748B" />
 
-            <BoxView
-                HeightRequest="1"
-                Color="#E5E7EB"
-                Margin="0,4" />
+            <BoxView HeightRequest="1"
+                     Color="#E5E7EB"
+                     Margin="0,4" />
         </VerticalStackLayout>
 
-        
-
-
-        <!-- ========================= -->
-        <!-- 3) BARKOD BÖL BUTONU -->
-        <!-- ========================= -->
+        --><!-- ================================================= --><!--
+        --><!-- 3) Barkod Böl --><!--
+        --><!-- ================================================= --><!--
         <Button
             Grid.Row="2"
-            Text="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DraftTitle}"
+            Text="Barkod Böl"
             IsVisible="{Binding HasOriginalBarcode}"
             Clicked="OnAddSplitClicked"
             Margin="0,4" />
 
-        <!-- ========================= -->
-        <!-- 4) LİSTE -->
-        <!-- ========================= -->
+        --><!-- ================================================= --><!--
+        --><!-- 4) Liste --><!--
+        --><!-- ================================================= --><!--
         <CollectionView
             Grid.Row="3"
             ItemsSource="{Binding MixedItems}"
@@ -81,19 +409,8 @@
                 <DataTemplate>
                     <Grid>
 
-                        <!-- YENİ SPLIT – NORMAL -->
+                        --><!-- Yeni Split --><!--
                         <SwipeView IsVisible="{Binding IsNewAndNotEditing}">
-                            <!--<SwipeView.LeftItems>
-                                <SwipeItems Mode="Reveal">
-                                    <SwipeItem
-                                        Text="Düzenle"
-                                        BackgroundColor="#38BDF8"<
-                                        Invoked="OnEditSwipe"
-                                        CommandParameter="{Binding .}" />
-                                </SwipeItems>
-                            </SwipeView.LeftItems>-->
-                            
-
                             <SwipeView.RightItems>
                                 <SwipeItems Mode="Reveal">
                                     <SwipeItem
@@ -106,35 +423,24 @@
 
                             <Grid Padding="6"
                                   BackgroundColor="#ECFEFF">
-                                <VerticalStackLayout
-                                     Grid.Row="1"
-                                     Spacing="3">
-                                    <Label
-                                    Text="{Binding SummaryLine}"
-                                    FontSize="15"                                    
-                                    TextColor="#0F172A" />
-                                </VerticalStackLayout>
+                                <Label Text="{Binding SummaryLine}"
+                                       FontSize="15"
+                                       TextColor="#0F172A" />
                             </Grid>
                         </SwipeView>
 
-                        <!-- ESKİ SPLIT – PASİF -->
-                        <Grid
-                            IsVisible="{Binding IsExisting}"
-                            Padding="6"
-                            BackgroundColor="#F8FAFC"
-                            Opacity="0.8">
-                            <VerticalStackLayout
-                            Grid.Row="1"
-                            Spacing="2">
-                                <Label
-                                Text="{Binding Barcode}"
-                                FontSize="14"
-                                TextColor="DarkRed" />
-
-                                <Label
-                                Text="{Binding SummaryLine}"
-                                FontSize="12"
-                                TextColor="#475569" />
+                        --><!-- Eski Split --><!--
+                        <Grid IsVisible="{Binding IsExisting}"
+                              Padding="6"
+                              BackgroundColor="#F8FAFC"
+                              Opacity="0.8">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding Barcode}"
+                                       FontSize="14"
+                                       TextColor="DarkRed" />
+                                <Label Text="{Binding SummaryLine}"
+                                       FontSize="12"
+                                       TextColor="#475569" />
                             </VerticalStackLayout>
                         </Grid>
 
@@ -143,138 +449,152 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- ========================= -->
-        <!-- 5) ALT BAR -->
-        <!-- ========================= -->
+        --><!-- ================================================= --><!--
+        --><!-- 5) Alt Bar --><!--
+        --><!-- ================================================= --><!--
         <Grid Grid.Row="4"
-              ColumnDefinitions="*,Auto"
+              ColumnDefinitions="*"
               Padding="6">
 
-            <!--<Label
-                Text="{Binding TotalBarcodeCount, StringFormat='Toplam Barkod: {0}'}"
-                VerticalOptions="Center" />-->
-
             <Button
-                Grid.Column="0"
-                IsVisible="{Binding HasOriginalBarcode}"
+                IsVisible="{Binding ShowBottomSaveButton}"
                 Text="Kaydet"
                 Clicked="OnSaveClicked" />
         </Grid>
 
-        <!-- ========================= -->
-        <!-- POPUP – BARKOD BÖL -->
-        <!-- ========================= -->
-        <Grid
-            Grid.RowSpan="5"
-            IsVisible="{Binding IsDraftOpen}"
-            BackgroundColor="#80000000"
-            Padding="20">
+        --><!-- ================================================= --><!--
+        --><!-- ANA DRAFT POPUP --><!--
+        --><!-- ================================================= --><!--
+        <Grid Grid.RowSpan="5"
+              IsVisible="{Binding IsDraftOpen}"
+              BackgroundColor="#80000000"
+              Padding="20">
 
-            <Border
-                BackgroundColor="White"
-                StrokeShape="RoundRectangle 12"
-                Padding="16"
-                VerticalOptions="Center">
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="16"
+                    VerticalOptions="Center">
 
                 <VerticalStackLayout
                     BindingContext="{Binding DraftRow}"
                     Spacing="10">
 
-                    <Label
-                        Text="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DraftTitle}"
-                        FontAttributes="Bold"
-                        FontSize="16" />
+                    <Label Text="{Binding DraftTitle}"
+                           FontAttributes="Bold"
+                           FontSize="16" />
 
-                    <!--<Picker Title="Stok"
-                            ItemsSource="{Binding StockList}"
-                            SelectedItem="{Binding ItemCode}" />-->
-
-                    <Grid ColumnDefinitions="*,Auto"
-                          ColumnSpacing="6">
-
-                                            <Picker
-                            Title="Parti"
-                            ItemsSource="{Binding LotList}"
-                            SelectedItem="{Binding LotCode}" />
-
-                                            <Button
-                            Grid.Column="1"
-                            Text="✕"
-                            FontSize="14"
-                            Padding="0"
-                            WidthRequest="32"
-                            HeightRequest="32"
-                            BackgroundColor="Transparent"
-                            TextColor="#64748B"
-                            Command="{Binding ClearLotCommand}" />
-                    </Grid>
-
-
-                    <Grid ColumnDefinitions="*,Auto"
-                          ColumnSpacing="6">
-
-                                            <Picker
-                            Title="Renk"
-                            ItemsSource="{Binding ColorList}"
-                            SelectedItem="{Binding ColorCode}" />
-
-                                            <Button
-                            Grid.Column="1"
-                            Text="✕"
-                            WidthRequest="32"
-                            HeightRequest="32"
-                            BackgroundColor="Transparent"
-                            TextColor="#64748B"
-                            Command="{Binding ClearColorCommand}" />
-                    </Grid>
-
-
-                    <Label Text="Miktar"
+                    --><!-- STOK (SADECE GÖSTERİM) --><!--
+                    <Label Text="Stok"
                            FontSize="12"
                            TextColor="#64748B" />
 
-                    <Entry Placeholder="Miktar"
-                           Keyboard="Numeric"
-                           Text="{Binding Quantity}" />
-
                     <Grid ColumnDefinitions="*,Auto"
                           ColumnSpacing="6">
+                        <Entry
+                            Grid.Column="0"
+                            Text="{Binding ItemDisplay}"
+                            Placeholder="Stok seçiniz"
+                            IsReadOnly="True" />
 
-                                            <Picker
-                            ItemsSource="{Binding UnitList}"
-                            SelectedItem="{Binding UnitCode}" />
-
-                                            <Button
+                        <Button
                             Grid.Column="1"
-                            Text="✕"
-                            WidthRequest="32"
-                            HeightRequest="32"
-                            BackgroundColor="Transparent"
-                            TextColor="#64748B"
-                            Command="{Binding ClearUnitCommand}" />
+                            Text="Seç"
+                            Clicked="OnOpenItemPicker" />
                     </Grid>
 
+                    --><!-- PARTİ --><!--
+                    <Picker
+                        Title="Parti"
+                        ItemsSource="{Binding LotList}"
+                        SelectedItem="{Binding LotCode}" />
+
+                    --><!-- RENK --><!--
+                    <Picker
+                        Title="Renk"
+                        ItemsSource="{Binding ColorList}"
+                        SelectedItem="{Binding ColorCode}" />
+
+                    --><!-- MİKTAR --><!--
+                    <Entry
+                        Placeholder="Miktar"
+                        Keyboard="Numeric"
+                        Text="{Binding Quantity}" />
+
+                    --><!-- BİRİM --><!--
+                    <Picker
+                        Title="Birim"
+                        ItemsSource="{Binding UnitList}"
+                        SelectedItem="{Binding UnitCode}" />
 
                     <Grid ColumnDefinitions="*,*"
                           ColumnSpacing="10">
 
-                        <Button
-                            Text="Vazgeç"
-                            BackgroundColor="#E5E7EB"
-                            TextColor="Black"
-                            Clicked="OnCancelDraft" />
+                        <Button Text="Vazgeç"
+                                BackgroundColor="#E5E7EB"
+                                TextColor="Black"
+                                Clicked="OnCancelDraft" />
 
-                        <Button
-                            Grid.Column="1"
-                            Text="Tamam"
-                            BackgroundColor="#38BDF8"
-                            TextColor="White"
-                            Clicked="OnConfirmDraft" />
+                        <Button Grid.Column="1"
+                                Text="Tamam"
+                                BackgroundColor="#38BDF8"
+                                TextColor="White"
+                                Clicked="OnConfirmDraft" />
                     </Grid>
 
                 </VerticalStackLayout>
             </Border>
         </Grid>
 
+        --><!-- ================================================= --><!--
+        --><!-- STOK SEÇ POPUP (AYRI) --><!--
+        --><!-- ================================================= --><!--
+        <Grid Grid.RowSpan="5"
+              IsVisible="{Binding IsItemPickerOpen}"
+              BackgroundColor="#80000000"
+              Padding="20">
+
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="16"
+                    WidthRequest="500"
+                    HeightRequest="500"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <Label Text="Stok Seç"
+                           FontAttributes="Bold"
+                           FontSize="16" />
+
+                    <Entry
+                        Placeholder="Ara (kod veya ad)"
+                        Text="{Binding DraftRow.ItemSearchText}" />
+
+                    <CollectionView
+                        ItemsSource="{Binding DraftRow.FilteredItemList}"
+                        SelectionMode="Single"
+                        SelectionChanged="OnItemPicked">
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <VerticalStackLayout Padding="8">
+                                    <Label Text="{Binding Code}"
+                                           FontAttributes="Bold" />
+                                    <Label Text="{Binding Name}"
+                                           FontSize="12"
+                                           TextColor="#64748B" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Button Text="Kapat"
+                            Clicked="OnCloseItemPicker" />
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
     </Grid>
-</ContentPage>
+</ContentPage>-->

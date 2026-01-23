@@ -6,6 +6,20 @@ using System.Threading.Tasks;
 
 namespace DepoX.Services.Erp.Dtos;
 
+public class NewBarcodeMetaDto
+{
+    public List<ItemMetaDto> Items { get; set; } = new();
+    public List<string> Colors { get; set; } = new();
+    public List<string> Units { get; set; } = new();
+}
+
+public class ItemMetaDto
+{
+    public string Code { get; set; } = "";
+    public string Name { get; set; } = "";
+}
+
+
 public class SplitDraft
 {
     public string OriginalBarcode { get; set; } = default!;
@@ -14,6 +28,7 @@ public class SplitDraft
 
 public class SplitNewBarcodeDraft
 {
+    public string NewBarcode { get; set; } = default!;
     public string ItemCode { get; set; } = default!;
     public string ItemName { get; set; } = default!;
     public string LotCode { get; set; } = default!;
