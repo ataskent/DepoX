@@ -1,12 +1,392 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="DepoX.Features.Basket.BasketPage"
-             Title="BasketPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="DepoX.Features.Basket.BasketPage"
+    Title="Sepet">
+    <Grid>
+        <Grid
+        RowDefinitions="Auto,Auto,*,*,Auto"
+        RowSpacing="8"
+        Padding="10">
+
+            <!-- ========================= -->
+            <!-- 1️⃣ SEPET + WHOUSE HEADER -->
+            <!-- ========================= -->
+            <Border
+            Grid.Row="0"
+            Stroke="#CBD5E1"
+            StrokeThickness="1"
+            Background="#F8FAFC"
+            Padding="10"
+            StrokeShape="RoundRectangle 12">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <!-- 🧺 SEPET SATIRI -->
+                    <Grid
+                    ColumnDefinitions="Auto,*,Auto,Auto"
+                    ColumnSpacing="8"
+                    VerticalOptions="Center">
+
+                        <!-- Sepet İkonu -->
+                        <Border
+                        WidthRequest="42"
+                        HeightRequest="42"
+                        Stroke="#CBD5E1"
+                        Background="#EFF6FF"
+                        StrokeShape="RoundRectangle 10">
+                            <Label
+                            Text="🧺"
+                            FontSize="20"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenBasketListCommand}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+
+                        <!-- Sepet No -->
+                        <Entry
+                        Grid.Column="1"
+                        Placeholder="Sepet no giriniz / seçiniz"
+                        Text="{Binding BasketNo}"
+                        HeightRequest="42"
+                        IsEnabled="true" />
+
+                        <!-- Yeni -->
+                        <Button
+                        Grid.Column="2"
+                        Text="Yeni"
+                        Padding="0"
+                        HeightRequest="42"
+                        WidthRequest="46"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        Command="{Binding NewBasketCommand}"
+                        BackgroundColor="#2563EB"
+                        TextColor="White"
+                        CornerRadius="10" />
+
+                        <!-- Sil -->
+                        <Button
+                        Grid.Column="3"
+                        Text="Sil"
+                        Padding="0"
+                        HeightRequest="42"
+                        WidthRequest="46"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        Command="{Binding DeleteBasketCommand}"
+                        IsEnabled="{Binding HasActiveBasket}"
+                        BackgroundColor="#6F1239"
+                        TextColor="White"
+                        CornerRadius="10" />
+                    </Grid>
+
+                    <!-- 🏭 WHOUSE SATIRI -->
+                    <Grid
+                    ColumnDefinitions="Auto,*,Auto"
+                    ColumnSpacing="8"
+                    VerticalOptions="Center">
+
+                        <!-- Whouse İkonu -->
+                        <Border
+                        WidthRequest="42"
+                        HeightRequest="42"
+                        Stroke="#CBD5E1"
+                        Background="#F5F3FF"
+                        StrokeShape="RoundRectangle 10">
+                            <Label
+                            Text="🏭"
+                            FontSize="20"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenWhouseListCommand}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+
+                        <!-- Whouse -->
+                        <Entry
+                        Grid.Column="1"
+                        Placeholder="Whouse giriniz / seçiniz"
+                        Text="{Binding SelectedWhouse.Name}"
+                        HeightRequest="42"
+                        IsEnabled="false" />
+
+                        <!-- Boşalt -->
+                        <Button
+                        Grid.Column="2"
+                        Text="Boşalt"
+                        Padding="0"
+                        HeightRequest="42"
+                        WidthRequest="100"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        Command="{Binding ClearBasketCommand}"
+                        IsEnabled="{Binding HasActiveBasket}"
+                        BackgroundColor="#6D28D9"
+                        TextColor="White"
+                        CornerRadius="10" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+            <!-- ========================= -->
+
+
+
+            <!-- ========================= -->
+            <!-- 2️⃣ BARKOD OKUTMA -->
+            <!-- ========================= -->
+            <Border
+            Grid.Row="1"
+            Stroke="#38BDF8"
+            StrokeThickness="1"
+            Background="#ECFEFF"
+            Padding="8"
+            StrokeShape="RoundRectangle 10"
+            IsEnabled="{Binding CanScanBarcode}"
+            IsVisible="{Binding CanScanBarcode}">
+
+                <Entry
+                x:Name="BarcodeEntry"
+                Placeholder="Barkod okutun"
+                FontSize="18"
+                ReturnType="Done"   
+                IsEnabled="{Binding CanScanBarcode}"
+                IsVisible="{Binding CanScanBarcode}"
+                
+                Completed="OnBarcodeCompleted" />
+            </Border>
+
+            <!-- ========================= -->
+            <!-- 3️⃣ ERP STOKLAR -->
+            <!-- ========================= -->
+            <Border
+            Grid.Row="2"
+            Stroke="#A7F3D0"
+            StrokeThickness="1"
+            Background="#F0FDF4"
+            Padding="8"
+            StrokeShape="RoundRectangle 12">
+
+                <Grid RowDefinitions="Auto,*"
+                  RowSpacing="6">
+
+                    <Label
+                    Grid.Row="0"
+                    Text="ERP Doğrulanan Stoklar"
+                    FontAttributes="Bold"
+                    TextColor="#065F46" />
+
+                    <CollectionView                        
+                    Grid.Row="1"
+                    ItemsSource="{Binding ValidatedStocks}"
+                    VerticalOptions="Fill" />
+                </Grid>
+            </Border>
+
+            <!-- ========================= -->
+            <!-- 4️⃣ SEPETTEKİ BARKODLAR -->
+            <!-- ========================= -->
+            <Border
+            Grid.Row="3"
+            Stroke="#CBD5E1"
+            StrokeThickness="1"
+            Background="White"
+            Padding="8"
+            StrokeShape="RoundRectangle 12">
+
+                <Grid RowDefinitions="Auto,*"
+                  RowSpacing="6">
+
+                    <Label
+                    Grid.Row="0"
+                    Text="Sepetteki Barkodlar"
+                    FontAttributes="Bold"
+                    TextColor="#0F172A" />
+
+                    <CollectionView
+                        Grid.Row="1"
+                        ItemsSource="{Binding Items}"
+                        VerticalOptions="Fill">        
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid
+                                    ColumnDefinitions="*,Auto"
+                                    Padding="6">
+
+                                    <Label
+                                        Text="{Binding Barcode}"
+                                        FontAttributes="Bold"
+                                        TextColor="#0F172A" />
+
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Quantity}"
+                                        TextColor="#334155" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                </Grid>
+            </Border>
+
+            <!-- ========================= -->
+            <!-- 5️⃣ KAYDET -->
+            <!-- ========================= -->
+            <Button
+            Grid.Row="4"
+            Text="Kaydet"
+            HeightRequest="50"
+            FontSize="16"
+            CornerRadius="14"
+            BackgroundColor="#2563EB"
+            TextColor="White"
+            IsEnabled="{Binding HasActiveBasket}"
+            Clicked="OnSaveClicked" />
+
+        </Grid>
+        <!-- ========================= -->
+        <!-- 🏭 WHOUSE POPUP -->
+        <!-- ========================= -->
+        <Grid
+        IsVisible="{Binding IsWhousePickerOpen}"
+        BackgroundColor="#80000000"
+        Grid.RowSpan="6">
+
+            <!-- Popup İçerik -->
+            <Border
+        WidthRequest="340"
+        BackgroundColor="White"
+        Padding="12"
+        StrokeShape="RoundRectangle 14"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <!-- Başlık -->
+                    <Label
+                Text="Depo Seç"
+                FontSize="16"
+                FontAttributes="Bold"
+                HorizontalOptions="Center" />
+
+                    <!-- Liste -->
+                    <CollectionView
+                ItemsSource="{Binding Whouses}"
+                SelectionMode="Single"
+                SelectionChanged="OnWhouseSelected"
+                HeightRequest="300">
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                            Padding="10"
+                            Margin="4"
+                            Stroke="#E5E7EB"
+                            Background="#F8FAFC"
+                            StrokeShape="RoundRectangle 10">
+
+                                    <VerticalStackLayout>
+                                        <Label
+                                    Text="{Binding Code}"
+                                    FontAttributes="Bold" />
+                                        <Label
+                                    Text="{Binding Name}"
+                                    FontSize="12"
+                                    TextColor="Gray" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                    <!-- Kapat -->
+                    <Button
+                Text="Vazgeç"
+                BackgroundColor="#E5E7EB"
+                TextColor="#111827"
+                CornerRadius="10"
+                Clicked="OnCloseWhousePicker" />
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+        <!-- 🏭 BASKET POPUP -->
+        <!-- ========================= -->
+        <Grid
+        IsVisible="{Binding IsBasketPickerOpen}"
+        BackgroundColor="#80000000"
+        Grid.RowSpan="6">
+
+                    <!-- Popup İçerik -->
+                    <Border
+        WidthRequest="340"
+        BackgroundColor="White"
+        Padding="12"
+        StrokeShape="RoundRectangle 14"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <!-- Başlık -->
+                    <Label
+                    Text="Sepet Seç"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center" />
+
+                    <!-- Liste -->
+                    <CollectionView
+                                    ItemsSource="{Binding Baskets}"
+                                    SelectionMode="Single"
+                                    SelectionChanged="OnBasketSelected"
+                                    HeightRequest="300">
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Padding="10"
+                                    Margin="4"
+                                    Stroke="#E5E7EB"
+                                    Background="#F8FAFC"
+                                    StrokeShape="RoundRectangle 10">
+
+                                    <VerticalStackLayout>
+                                        <Label
+                                        Text="{Binding Code}"
+                                        FontAttributes="Bold" />
+                                        <!--<Label
+                            Text="{Binding Name}"
+                            FontSize="12"
+                            TextColor="Gray" />-->
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                    <!-- Kapat -->
+                    <Button
+        Text="Vazgeç"
+        BackgroundColor="#E5E7EB"
+        TextColor="#111827"
+        CornerRadius="10"
+        Clicked="OnCloseBasketPicker" />
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Grid>
+
 </ContentPage>

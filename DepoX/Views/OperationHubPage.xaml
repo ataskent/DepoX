@@ -9,10 +9,10 @@
         Spacing="16">
 
         <Button
-            Text="Sayım"
+            Text="Sepet"
             FontSize="18"
             HeightRequest="56"
-            Clicked="OnCountClicked" />
+            Clicked="OnBasketClicked" />
 
         <Button
             Text="Barkod Bölme"
@@ -21,10 +21,11 @@
             Clicked="OnSplitClicked" />
 
         <Button
-            Text="Sepet"
+            Text="Sayım"
             FontSize="18"
             HeightRequest="56"
-            Clicked="OnBasketClicked" />
+            Clicked="OnCountClicked" />
+
 
     </VerticalStackLayout>
 

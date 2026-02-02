@@ -31,6 +31,20 @@ namespace DepoX.Services.Erp
 
         #endregion Split
 
+        #region Basket
+        
+        Task<ErpResult<List<ErpWhouseDto>>> GetWhousesAsync(
+            CancellationToken cancellationToken = default);
+
+
+        Task<ErpResult<ErpBasketWhouseDto>> GetBasketDataAsync(
+            CancellationToken cancellationToken = default);
+
+
+
+
+        #endregion Basket
+
     }
 
 }

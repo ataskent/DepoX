@@ -161,5 +161,28 @@ namespace DepoX.Services.Erp
 
         #endregion Split
 
+        #region Basket
+
+        public Task<ErpResult<List<ErpWhouseDto>>> GetWhousesAsync(
+    CancellationToken cancellationToken = default)
+        {
+            return PostAsync<List<ErpWhouseDto>>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetWhouses",
+                new { },
+                cancellationToken);
+        }
+
+        public Task<ErpResult<ErpBasketWhouseDto>> GetBasketDataAsync(
+CancellationToken cancellationToken = default)
+        {
+            return PostAsync<ErpBasketWhouseDto>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetBasketWhouseData",
+                new { },
+                cancellationToken);
+        }
+
+
+        #endregion Basket
+
     }
 }

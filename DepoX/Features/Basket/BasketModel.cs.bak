@@ -1,0 +1,14 @@
+﻿namespace DepoX.Features.Basket;
+
+public class BasketDraft
+{
+    public Guid ClientDraftId { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public List<BasketItem> Items { get; set; } = new();
+}
+
+public class BasketItem
+{
+    public string Barcode { get; set; } = string.Empty;
+    public decimal Quantity { get; set; }
+}

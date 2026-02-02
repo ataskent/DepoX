@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Maui;
+using DepoX.Features.Basket;
 using DepoX.Features.Count;
+
+//using DepoX.Features.Count;
 using DepoX.Features.Split;
 using DepoX.Services.Erp;
 using DepoX.Views;
@@ -32,11 +35,14 @@ namespace DepoX
             builder.Services.AddSingleton<IErpGateway, ErpGateway>();
             //builder.Services.AddSingleton<IBarcodeCache, BarcodeCache>();
             // ===== Application Services =====
-            builder.Services.AddTransient<ICountService, CountService>();
+            builder.Services.AddTransient<IBasketService, BasketService>();
             builder.Services.AddTransient<ISplitService, SplitService>();
+            builder.Services.AddTransient<ICountService, CountService>();
             // ===== Pages =====
             builder.Services.AddTransient<SplitPage>();
             builder.Services.AddTransient<SplitViewModel>();
+            builder.Services.AddTransient<BasketPage>();
+            builder.Services.AddTransient<BasketViewModel>();
             builder.Services.AddTransient<CountPage>();
             builder.Services.AddTransient<CountViewModel>();
 
