@@ -22,5 +22,9 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(
             nameof(Features.Basket.BasketPage),
             typeof(Features.Basket.BasketPage));
+
+        Routing.RegisterRoute(
+            nameof(Features.FromWorder.FromWorderPage),
+            typeof(Features.FromWorder.FromWorderPage));
     }
 }

@@ -9,7 +9,7 @@
         Spacing="16">
 
         <Button
-            Text="Sepet"
+            Text="Sepet İşlemleri"
             FontSize="18"
             HeightRequest="56"
             Clicked="OnBasketClicked" />
@@ -21,10 +21,16 @@
             Clicked="OnSplitClicked" />
 
         <Button
-            Text="Sayım"
+            Text="Depo Sayım"
             FontSize="18"
             HeightRequest="56"
             Clicked="OnCountClicked" />
+
+        <Button
+            Text="İş Emrinden Transfer"
+            FontSize="18"
+            HeightRequest="56"
+            Clicked="OnFromWorderClicked" />
 
 
     </VerticalStackLayout>

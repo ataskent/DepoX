@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows.Input;
 
 namespace DepoX.Features.Basket;
@@ -243,7 +244,24 @@ public class BasketViewModel : INotifyPropertyChanged
         SelectedBasket = basket;
         BasketNo = basket.Code;
         IsBasketPickerOpen = false;
+
+        var Task = LoadBasketItemsAsync(BasketNo);
     }
+
+    public async Task LoadBasketItemsAsync(string basketCode)
+    {
+        var erpResult = await _basketService
+            .GetBasketBarcodeDataAsync(basketCode);
+
+        Items.Clear();
+
+        if (erpResult?.Data == null)
+            return;
+
+        foreach (var dto in erpResult.Data)
+            Items.Add(BasketMapper.ToModel(dto));
+    }
+
 
 
     public void CloseWhousePicker()
@@ -272,6 +290,7 @@ public class BasketViewModel : INotifyPropertyChanged
             Items.Add(new BasketItemVm
             {
                 Barcode = barcode,
+                Whouse = SelectedWhouse!.Code,
                 Quantity = 1
             });
     }
@@ -358,6 +377,14 @@ public class BasketItemVm : INotifyPropertyChanged
         get => _quantity;
         set { _quantity = value; OnPropertyChanged(); }
     }
+
+    string _whouse = "";
+    public string Whouse
+    {
+        get => _whouse;
+        set { _whouse = value; OnPropertyChanged(); }
+    }
+
 
     public bool IsInvalid { get; set; }
 }

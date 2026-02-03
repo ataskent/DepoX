@@ -17,15 +17,15 @@
 
         <!-- OPERASYON -->
         <ShellContent
-            Title="Operasyon"
+            Title="Depo Stok"
             Icon="tab_operation.png"
             ContentTemplate="{DataTemplate views:OperationHubPage}" />
 
-        <!-- STOK -->
+        <!-- STOK --><!--
         <ShellContent
             Title="Stok"
             Icon="tab_stock.png"
-            ContentTemplate="{DataTemplate views:StockHubPage}" />
+            ContentTemplate="{DataTemplate views:StockHubPage}" />-->
 
         <!-- ÜRETİM -->
         <ShellContent

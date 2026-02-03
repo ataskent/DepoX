@@ -24,4 +24,10 @@ public partial class OperationHubPage : ContentPage
         await Shell.Current.GoToAsync(
             nameof(Features.Basket.BasketPage));
     }
+
+    private async void OnFromWorderClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(
+            nameof(Features.FromWorder.FromWorderPage));
+    }
 }

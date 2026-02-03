@@ -19,6 +19,7 @@ public class ErpWhouseDto
 {
     public string Code { get; set; } = "";
     public string Name { get; set; } = "";
+    public string BranchCode { get; set; } = "";
 }
 
 public class ErpBasketDto
@@ -27,8 +28,30 @@ public class ErpBasketDto
 
 }
 
+public class ErpBranchDto
+{
+    public string Code { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+
+}
+
+public class ErpOptionalDto
+{
+    public List<ErpBranchDto> branches { get; set; } = new();
+    public List<ErpWhouseDto> whouses { get; set; } = new();
+}
+
 public class ErpBasketWhouseDto
 {
     public List<ErpBasketDto> baskets { get; set; } = new();
     public List<ErpWhouseDto> whouses { get; set; } = new();
+}
+
+public class BasketItemDto
+{
+    public string Barcode { get; set; } = string.Empty;
+    public string StockCode { get; set; } = string.Empty;
+    public decimal Quantity { get; set; } = 0;
+    public string FromWarehouseCode { get; set; } = string.Empty;
+    public string LocationCode { get; set; } = string.Empty;
 }

@@ -31,6 +31,13 @@ public class BasketService : IBasketService
         
     }
 
+    public Task<ErpResult<List<BasketItemDto>>> GetBasketBarcodeDataAsync(string basketCode, CancellationToken cancellationToken = default)
+    {
+        var result = _erpGateway.GetBasketBarcodeDataAsync(basketCode, cancellationToken);
+        return result;
+
+    }
+
 }
 
 public interface IBasketService
@@ -41,4 +48,7 @@ public interface IBasketService
 
         Task<ErpResult<ErpBasketWhouseDto>> GetBasketDataAsync(
         CancellationToken cancellationToken = default);
+
+        Task<ErpResult<List<BasketItemDto>>> GetBasketBarcodeDataAsync(string basketCode, CancellationToken cancellationToken = default);
+    
 }

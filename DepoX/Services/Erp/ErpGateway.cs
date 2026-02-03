@@ -181,6 +181,25 @@ CancellationToken cancellationToken = default)
                 cancellationToken);
         }
 
+        public Task<ErpResult<List<BasketItemDto>>> GetBasketBarcodeDataAsync(
+     string basketCode,
+     CancellationToken cancellationToken = default)
+        {
+            return PostAsync<List<BasketItemDto>>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetBasketBarcodeData",
+                new { BasketBarcode = basketCode },
+                cancellationToken);
+        }
+
+        public Task<ErpResult<ErpOptionalDto>> GetOptionalDataAsync(
+CancellationToken cancellationToken = default)
+        {
+            return PostAsync<ErpOptionalDto>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetOptionalData",
+                new { },
+                cancellationToken);
+        }
+
 
         #endregion Basket
 

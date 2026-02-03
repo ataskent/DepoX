@@ -36,6 +36,15 @@ public static class BasketMapper
             Name = dto.Name
         };
     }
+    public static BasketItemVm ToModel(this BasketItemDto dto)
+    {
+        return new BasketItemVm
+        {
+            Barcode = dto.Barcode,
+            Quantity = dto.Quantity,
+            Whouse = dto.FromWarehouseCode
+        };
+    }
 }
 
 public static class BasketErpMapper

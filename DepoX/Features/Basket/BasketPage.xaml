@@ -49,7 +49,7 @@
                         <!-- Sepet No -->
                         <Entry
                         Grid.Column="1"
-                        Placeholder="Sepet no giriniz / seçiniz"
+                        Placeholder="Sepet seçiniz/giriniz"
                         Text="{Binding BasketNo}"
                         HeightRequest="42"
                         IsEnabled="true" />
@@ -84,7 +84,7 @@
                         CornerRadius="10" />
                     </Grid>
 
-                    <!-- 🏭 WHOUSE SATIRI -->
+                    <!-- 📦 WHOUSE SATIRI -->
                     <Grid
                     ColumnDefinitions="Auto,*,Auto"
                     ColumnSpacing="8"
@@ -98,7 +98,7 @@
                         Background="#F5F3FF"
                         StrokeShape="RoundRectangle 10">
                             <Label
-                            Text="🏭"
+                            Text="📦"
                             FontSize="20"
                             HorizontalOptions="Center"
                             VerticalOptions="Center" />
@@ -110,7 +110,7 @@
                         <!-- Whouse -->
                         <Entry
                         Grid.Column="1"
-                        Placeholder="Whouse giriniz / seçiniz"
+                        Placeholder="Depo seçiniz"
                         Text="{Binding SelectedWhouse.Name}"
                         HeightRequest="42"
                         IsEnabled="false" />
@@ -161,38 +161,12 @@
                 Completed="OnBarcodeCompleted" />
             </Border>
 
-            <!-- ========================= -->
-            <!-- 3️⃣ ERP STOKLAR -->
-            <!-- ========================= -->
-            <Border
-            Grid.Row="2"
-            Stroke="#A7F3D0"
-            StrokeThickness="1"
-            Background="#F0FDF4"
-            Padding="8"
-            StrokeShape="RoundRectangle 12">
-
-                <Grid RowDefinitions="Auto,*"
-                  RowSpacing="6">
-
-                    <Label
-                    Grid.Row="0"
-                    Text="ERP Doğrulanan Stoklar"
-                    FontAttributes="Bold"
-                    TextColor="#065F46" />
-
-                    <CollectionView                        
-                    Grid.Row="1"
-                    ItemsSource="{Binding ValidatedStocks}"
-                    VerticalOptions="Fill" />
-                </Grid>
-            </Border>
 
             <!-- ========================= -->
             <!-- 4️⃣ SEPETTEKİ BARKODLAR -->
             <!-- ========================= -->
             <Border
-            Grid.Row="3"
+            Grid.Row="2"
             Stroke="#CBD5E1"
             StrokeThickness="1"
             Background="White"
@@ -204,14 +178,14 @@
 
                     <Label
                     Grid.Row="0"
-                    Text="Sepetteki Barkodlar"
+                    Text="Barkodlar"
                     FontAttributes="Bold"
                     TextColor="#0F172A" />
 
                     <CollectionView
                         Grid.Row="1"
                         ItemsSource="{Binding Items}"
-                        VerticalOptions="Fill">        
+                        VerticalOptions="Fill">
 
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
@@ -220,20 +194,55 @@
                                     Padding="6">
 
                                     <Label
+                                        Grid.Column="0"
                                         Text="{Binding Barcode}"
                                         FontAttributes="Bold"
                                         TextColor="#0F172A" />
 
                                     <Label
                                         Grid.Column="1"
+                                        Text="{Binding Whouse}"
+                                        FontAttributes="Bold"
+                                        TextColor="#0F172A" />
+
+                                    <!--<Label
+                                        Grid.Column="2"
                                         Text="{Binding Quantity}"
-                                        TextColor="#334155" />
+                                        TextColor="#334155" />-->
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
 
                     </CollectionView>
 
+                </Grid>
+            </Border>
+
+
+            <!-- ========================= -->
+            <!-- 3️⃣ ERP STOKLAR -->
+            <!-- ========================= -->
+            <Border
+            Grid.Row="3"
+            Stroke="#A7F3D0"
+            StrokeThickness="1"
+            Background="#F0FDF4"
+            Padding="8"
+            StrokeShape="RoundRectangle 12">
+
+                <Grid RowDefinitions="Auto,*"
+                  RowSpacing="6">
+
+                    <Label
+                    Grid.Row="0"
+                    Text="Stoklar"
+                    FontAttributes="Bold"
+                    TextColor="#065F46" />
+
+                    <CollectionView                        
+                    Grid.Row="1"
+                    ItemsSource="{Binding ValidatedStocks}"
+                    VerticalOptions="Fill" />
                 </Grid>
             </Border>
 

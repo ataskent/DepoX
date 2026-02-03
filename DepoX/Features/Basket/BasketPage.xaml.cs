@@ -51,7 +51,7 @@ public partial class BasketPage : ContentPage
 
 
     // ===============================
-    // WHOUSE SEÇÝMÝ
+    // DEPO SEÇÝMÝ
     // ===============================
 
     private void OnWhouseSelected(object sender, SelectionChangedEventArgs e)

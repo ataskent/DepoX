@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Maui;
 using DepoX.Features.Basket;
+using DepoX.Features.FromWorder;
+using DepoX.Features.Shared;
 using DepoX.Features.Count;
-
-//using DepoX.Features.Count;
 using DepoX.Features.Split;
 using DepoX.Services.Erp;
 using DepoX.Views;
@@ -38,6 +38,7 @@ namespace DepoX
             builder.Services.AddTransient<IBasketService, BasketService>();
             builder.Services.AddTransient<ISplitService, SplitService>();
             builder.Services.AddTransient<ICountService, CountService>();
+            builder.Services.AddTransient<ISharedService, SharedService>();
             // ===== Pages =====
             builder.Services.AddTransient<SplitPage>();
             builder.Services.AddTransient<SplitViewModel>();
@@ -45,6 +46,10 @@ namespace DepoX
             builder.Services.AddTransient<BasketViewModel>();
             builder.Services.AddTransient<CountPage>();
             builder.Services.AddTransient<CountViewModel>();
+            builder.Services.AddTransient<FromWorderPage>();
+            builder.Services.AddTransient<FromWorderViewModel>();
+            builder.Services.AddTransient<SettingsPage>();
+            builder.Services.AddTransient<SharedViewModel>();
 
             // ===== Sync / Device =====
 

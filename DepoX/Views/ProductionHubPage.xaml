@@ -5,7 +5,7 @@
              Title="ProductionHubPage">
     <VerticalStackLayout>
         <Label 
-            Text="Welcome to .NET MAUI!"
+            Text="Geliştiriliyor"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
     </VerticalStackLayout>
