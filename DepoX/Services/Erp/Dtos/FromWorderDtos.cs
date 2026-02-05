@@ -1,37 +1,43 @@
-﻿namespace DepoX.Features.FromWorder;
+﻿
+namespace DepoX.Services.Erp.Dtos;
 
-
-public class TransferDataVm
+public class TransferList
 {
-    public TransferMVm Transfer { get; set; } = new();
-    public List<BarcodeVm> Barcodes { get; set; } = new();
-    public List<ItemsVm> Items { get; set; } = new();
+    public List<TransferM> Transfers { get; set; } = new();
+    public List<Whouse> Whouses { get; set; } = new();
 }
 
-public class WhouseVm
+public class TransferData
+{
+    public TransferM TransferM { get; set; } = new();
+    public List<Barcode> Barcodes { get; set; } = new();
+    public List<Items> Items { get; set; } = new();
+}
+
+public class Whouse
 {
     public string Code { get; set; } = "";
     public string Name { get; set; } = "";
 }
 
-public class TransferMVm
+public class TransferM
 {
     public string Code { get; set; } = "";
     public string Name { get; set; } = "";
     public string WhouseCode { get; set; } = "";
 }
 
-public class BarcodeVm
+public class Barcode
 {
     public string WhouseCode { get; set; } = "";
     public string Code { get; set; } = "";
     public decimal Quantity { get; set; }
 }
 
-public class ItemsVm
+public class Items
 {
+    public string WhouseCode { get; set; } = "";
     public string Code { get; set; } = "";
     public string Name { get; set; } = "";
     public decimal Quantity { get; set; }
-    public string WhouseCode { get; set; } = "";
 }

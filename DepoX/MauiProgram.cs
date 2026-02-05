@@ -39,6 +39,7 @@ namespace DepoX
             builder.Services.AddTransient<ISplitService, SplitService>();
             builder.Services.AddTransient<ICountService, CountService>();
             builder.Services.AddTransient<ISharedService, SharedService>();
+            builder.Services.AddTransient<IFromWorderService, FromWorderService>();
             // ===== Pages =====
             builder.Services.AddTransient<SplitPage>();
             builder.Services.AddTransient<SplitViewModel>();

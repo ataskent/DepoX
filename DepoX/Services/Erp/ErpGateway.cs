@@ -200,6 +200,37 @@ CancellationToken cancellationToken = default)
                 cancellationToken);
         }
 
+        public Task<ErpResult<TransferList>> GetTransferAsync(
+CancellationToken cancellationToken = default)
+        {
+            return PostAsync<TransferList>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetTransfer",
+                new { },
+                cancellationToken);
+        }
+
+        public Task<ErpResult<TransferData>> GetTransferDataAsync(
+            string transferCode,
+CancellationToken cancellationToken = default)
+        {
+            return PostAsync<TransferData>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetTransferData",
+                new { TransferCode = transferCode },
+                cancellationToken);
+        }
+
+        public Task<ErpResult<TransferData>> SaveTransferAsync(
+            TransferData transferData,
+CancellationToken cancellationToken = default)
+        {
+            return PostAsync<TransferData>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveTransferData",
+                new { dto = transferData },
+                cancellationToken);
+
+        }
+
+
 
         #endregion Basket
 

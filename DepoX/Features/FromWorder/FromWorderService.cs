@@ -20,9 +20,23 @@ public class FromWorderService : IFromWorderService
     }
 
 
-    public Task<ErpResult<ErpBasketWhouseDto>> GetBasketDataAsync(CancellationToken cancellationToken = default)
+    public Task<ErpResult<TransferList>> GetTransferAsync(CancellationToken cancellationToken = default)
     {
-        var result = _erpGateway.GetBasketDataAsync(cancellationToken);
+        var result = _erpGateway.GetTransferAsync(cancellationToken);
+        return result;
+
+    }
+
+    public Task<ErpResult<TransferData>> GetTransferDataAsync(string transferCode,CancellationToken cancellationToken = default)
+    {
+        var result = _erpGateway.GetTransferDataAsync(transferCode, cancellationToken);
+        return result;
+
+    }
+
+    public Task<ErpResult<TransferData>> SaveTransferAsync(TransferData transferData, CancellationToken cancellationToken = default)
+    {
+        var result = _erpGateway.SaveTransferAsync(transferData, cancellationToken);
         return result;
 
     }
@@ -31,7 +45,13 @@ public class FromWorderService : IFromWorderService
 
 public interface IFromWorderService
 {
-    Task<ErpResult<ErpBasketWhouseDto>> GetBasketDataAsync(
+    Task<ErpResult<TransferList>> GetTransferAsync(
+    CancellationToken cancellationToken = default);
+
+
+    Task<ErpResult<TransferData>> GetTransferDataAsync(string transferCode,
+    CancellationToken cancellationToken = default);
+    Task<ErpResult<TransferData>> SaveTransferAsync(TransferData transferData,
     CancellationToken cancellationToken = default);
 
 

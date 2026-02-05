@@ -46,8 +46,21 @@ namespace DepoX.Services.Erp
         Task<ErpResult<ErpOptionalDto>> GetOptionalDataAsync(
             CancellationToken cancellationToken = default);
 
-
         #endregion Basket
+
+        #region FromWorder
+        Task<ErpResult<TransferList>> GetTransferAsync(
+            CancellationToken cancellationToken = default);
+
+        Task<ErpResult<TransferData>> GetTransferDataAsync(
+            string transferCode,
+            CancellationToken cancellationToken = default);
+
+        Task<ErpResult<TransferData>> SaveTransferAsync(
+            TransferData transferData,
+            CancellationToken cancellationToken = default);
+
+        #endregion FromWorder
 
     }
 
