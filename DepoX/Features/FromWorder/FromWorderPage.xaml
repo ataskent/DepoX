@@ -263,12 +263,12 @@
             <!-- 3️⃣ ERP STOKLAR -->
             <!-- ========================= -->
             <Border
-    Grid.Row="3"
-    Stroke="#A7F3D0"
-    StrokeThickness="1"
-    Background="#F0FDF4"
-    Padding="8"
-    StrokeShape="RoundRectangle 12">
+        Grid.Row="3"
+        Stroke="#A7F3D0"
+        StrokeThickness="1"
+        Background="#F0FDF4"
+        Padding="8"
+        StrokeShape="RoundRectangle 12">    
 
                 <Grid RowDefinitions="Auto,Auto,*"
           RowSpacing="6">

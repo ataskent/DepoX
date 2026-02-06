@@ -17,7 +17,7 @@
 
         <!-- OPERASYON -->
         <ShellContent
-            Title="Depo Stok"
+            Title="İşlemler"
             Icon="tab_operation.png"
             ContentTemplate="{DataTemplate views:OperationHubPage}" />
 
@@ -28,10 +28,10 @@
             ContentTemplate="{DataTemplate views:StockHubPage}" />-->
 
         <!-- ÜRETİM -->
-        <ShellContent
+        <!--<ShellContent
             Title="Üretim"
             Icon="tab_production.png"
-            ContentTemplate="{DataTemplate views:ProductionHubPage}" />
+            ContentTemplate="{DataTemplate views:ProductionHubPage}" />-->
 
         <!-- AYARLAR -->
         <ShellContent

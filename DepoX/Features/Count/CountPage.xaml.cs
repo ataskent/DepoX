@@ -17,6 +17,40 @@ public partial class CountPage : ContentPage
         BindingContext = _vm;
     }
 
+    // ===============================
+    // DEPO SEÇİMİ
+    // ===============================
+
+    private void OnCountSelected(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.FirstOrDefault() is CountVm count)
+        {
+            _vm.SelectCount(count);
+        }
+    }
+
+    private void OnCloseCountPicker(object sender, EventArgs e)
+    {
+        _vm.CloseCountPicker();
+    }
+
+    // ===============================
+    // DEPO SEÇİMİ
+    // ===============================
+
+    private void OnWhouseSelected(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.FirstOrDefault() is WhouseVm whouse)
+        {
+            _vm.SelectWhouse(whouse);
+        }
+    }
+
+    private void OnCloseWhousePicker(object sender, EventArgs e)
+    {
+        _vm.CloseWhousePicker();
+    }
+
     // Barkod ENTER
     private void OnBarcodeCompleted(object sender, EventArgs e)
     {
@@ -33,9 +67,9 @@ public partial class CountPage : ContentPage
     private void OnSwipeDelete(object sender, EventArgs e)
     {
         if (sender is SwipeItem swipe &&
-            swipe.CommandParameter is CountItemVm item)
+            swipe.CommandParameter is BarcodeVm barcode)
         {
-            _vm.RemoveItem(item);
+            _vm.RemoveItem(barcode);
         }
     }
 
@@ -66,7 +100,13 @@ public partial class CountPage : ContentPage
         {
             _vm.IsBusy = true;
 
-            var draft = _vm.ToModel();
+            CountMVm countMVm = new CountMVm();
+            countMVm.DocNo = _vm.CountNo;
+            countMVm.CreatedAt = _vm.CreatedAt;
+            countMVm.Items = _vm.Items.ToList();
+            countMVm.Barcodes = _vm.Barcodes.ToList();
+
+            var draft = CountMapper.ToModel(countMVm);
             var result = await _countService.SaveAsync(draft, _saveCts.Token);
 
             if (result.Success)
@@ -77,6 +117,15 @@ public partial class CountPage : ContentPage
                     "Tamam");
 
                 _vm.Clear();
+
+                foreach (var item in result.Data.Barcodes)
+                {
+                    _vm.Barcodes.Add(CountMapper.ToModel(item));
+                }
+                foreach (var item in result.Data.Items)
+                {
+                    _vm.Items.Add(CountMapper.ToModel(item));
+                }
             }
             else
             {
@@ -101,6 +150,12 @@ public partial class CountPage : ContentPage
         {
             _vm.IsBusy = false;
         }
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _ = _vm.LoadInitialAsync();
     }
 
 

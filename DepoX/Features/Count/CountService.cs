@@ -13,19 +13,38 @@ public class CountService : ICountService
         _erpGateway = erpGateway;
     }
 
-    public Task<ErpResult<ErpBasketDraft>> SaveAsync(
-        CountDraft draft,
+    public Task<ErpResult<CountM>> SaveAsync(
+        CountM countM,
         CancellationToken cancellationToken = default)
     {
-        var erpDraft = draft.ToErp();
-        return _erpGateway.SaveBasketAsync(erpDraft, cancellationToken);
+        return _erpGateway.SaveCountAsync(countM, cancellationToken);
+    }
+
+    public Task<ErpResult<CountList>> GetCountAsync(CancellationToken cancellationToken = default)
+    {
+        var result = _erpGateway.GetCountAsync(cancellationToken);
+        return result;
+
+    }
+
+    public Task<ErpResult<CountM>> GetCountDataAsync(string countCode, CancellationToken cancellationToken = default)
+    {
+        var result = _erpGateway.GetCountDataAsync(countCode, cancellationToken);
+        return result;
+
     }
 }
 
 public interface ICountService
 {
-    Task<ErpResult<ErpBasketDraft>> SaveAsync(
-        CountDraft draft,
+    Task<ErpResult<CountM>> SaveAsync(
+        CountM countM,
+        CancellationToken cancellationToken = default);
+
+    Task<ErpResult<CountList>> GetCountAsync(
+    CancellationToken cancellationToken = default);
+
+    Task<ErpResult<CountM>> GetCountDataAsync(string countCode,
         CancellationToken cancellationToken = default);
 }
 

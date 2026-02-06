@@ -231,6 +231,36 @@ CancellationToken cancellationToken = default)
         }
 
 
+        public Task<ErpResult<CountM>> SaveCountAsync(
+            CountM countM,
+            CancellationToken cancellationToken = default)
+        {
+            return PostAsync<CountM>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveCountData",
+                new { dto = countM },
+                cancellationToken);
+
+        }
+
+        public Task<ErpResult<CountList>> GetCountAsync(
+            CancellationToken cancellationToken = default)
+        {
+            return PostAsync<CountList>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetCount",
+                new { },
+                cancellationToken);
+        }
+
+        public Task<ErpResult<CountM>> GetCountDataAsync(
+            string countCode,
+            CancellationToken cancellationToken = default)
+        {
+            return PostAsync<CountM>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetCountData",
+                new { CountCode = countCode },
+                cancellationToken);
+        }
+
 
         #endregion Basket
 

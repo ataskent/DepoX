@@ -62,6 +62,20 @@ namespace DepoX.Services.Erp
 
         #endregion FromWorder
 
+        #region Count
+        Task<ErpResult<CountM>> SaveCountAsync(
+            CountM countM,
+            CancellationToken cancellationToken = default);
+
+        Task<ErpResult<CountList>> GetCountAsync(
+        CancellationToken cancellationToken = default);
+
+        Task<ErpResult<CountM>> GetCountDataAsync(
+            string countCode,
+            CancellationToken cancellationToken = default);
+
+        #endregion
+
     }
 
 }
