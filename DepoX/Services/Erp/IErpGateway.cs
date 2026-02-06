@@ -43,6 +43,10 @@ namespace DepoX.Services.Erp
         string basketCode,
         CancellationToken cancellationToken = default);
 
+        Task<ErpResult<bool>> ClearBasketDataAsync(
+        string basketCode,
+        CancellationToken cancellationToken = default);
+
         Task<ErpResult<ErpOptionalDto>> GetOptionalDataAsync(
             CancellationToken cancellationToken = default);
 

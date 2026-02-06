@@ -191,6 +191,17 @@ CancellationToken cancellationToken = default)
                 cancellationToken);
         }
 
+        public Task<ErpResult<bool>> ClearBasketDataAsync(
+     string basketCode,
+     CancellationToken cancellationToken = default)
+        {
+            return PostAsync<bool>(
+                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/CloseBasketData",
+                new { BasketBarcode = basketCode },
+                cancellationToken);
+        }
+
+
         public Task<ErpResult<ErpOptionalDto>> GetOptionalDataAsync(
 CancellationToken cancellationToken = default)
         {

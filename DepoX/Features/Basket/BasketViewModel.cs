@@ -18,7 +18,7 @@ public class BasketViewModel : INotifyPropertyChanged
     // ?? SEPET
     // =========================
 
-    string? _basketNo;
+    string? _basketNo = string.Empty;
     public string? BasketNo
     {
         get => _basketNo;
@@ -319,6 +319,18 @@ public class BasketViewModel : INotifyPropertyChanged
     {
         Items.Clear();
         ValidatedStocks.Clear();
+
+        var Task = ClearBasketAsync(BasketNo);
+    }
+
+    public async Task ClearBasketAsync(string basketCode)
+    {
+        var erpResult = await _basketService
+            .ClearBasketDataAsync(basketCode);
+
+        if (erpResult?.Data == null)
+            return;
+
     }
 
     public void DeleteBasket()
