@@ -1,3 +1,4 @@
+using Microsoft.Maui.Controls.Shapes;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -14,6 +15,7 @@ public class BasketDraft
 
 public class BasketItem
 {
+    public string WhouseCode { get; set; } = string.Empty;
     public string Barcode { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
 }
@@ -50,6 +52,13 @@ public class BasketItemVm : INotifyPropertyChanged
         set { _barcode = value; OnPropertyChanged(); }
     }
 
+    decimal _qty;
+    public decimal Qty
+    {
+        get => _qty;
+        set { _qty = value; OnPropertyChanged(); }
+    }
+
     decimal _quantity;
     public decimal Quantity
     {
@@ -64,6 +73,57 @@ public class BasketItemVm : INotifyPropertyChanged
         set { _whouse = value; OnPropertyChanged(); }
     }
 
+    string _itemCode = "";
+    public string ItemCode
+    {
+        get => _itemCode;
+        set { _itemCode = value; OnPropertyChanged(); }
+    }
+
+    string _itemName = "";
+    public string ItemName
+    {
+        get => _itemName;
+        set { _itemName = value; OnPropertyChanged(); }
+    }
+
+    string _lotCode = "";
+    public string LotCode
+    {
+        get => _lotCode;
+        set { _lotCode = value; OnPropertyChanged(); }
+    }
+
+    string colorCode = "";
+    public string ColorCode
+    {
+        get => colorCode;
+        set { colorCode = value; OnPropertyChanged(); }
+    }
+
+    string _unitCode = "";
+    public string UnitCode
+    {
+        get => _unitCode;
+        set { _unitCode = value; OnPropertyChanged(); }
+    }
+
+    string _lineA = "";
+    public string LineA
+    {
+        get =>  $"Parti : {LotCode} - Renk : {ColorCode}";
+        set { _lineA = value; OnPropertyChanged(); }
+    }
+
+    string _lineB = "";
+    public string LineB
+    {
+        get => $"Miktar : {Qty} {UnitCode}";
+        set { _lineB = value; OnPropertyChanged(); }
+    }
+
+  
+
 
     public bool IsInvalid { get; set; }
 }
@@ -74,4 +134,16 @@ public class ValidatedStockVm
     public string ItemName { get; set; } = "";
     public decimal Quantity { get; set; }
     public bool HasError { get; set; }
+
+    public string LotCode { get; set; } = "";
+    public string ColorCode { get; set; } = "";
+    public string UnitCode { get; set; } = "";
+    public decimal Qty { get; set; }
+
+    public string LineA
+    {
+        get => $"Miktar : {Qty} {UnitCode}";
+    }
+
+
 }

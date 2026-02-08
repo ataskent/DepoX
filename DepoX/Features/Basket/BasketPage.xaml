@@ -173,8 +173,8 @@
             Padding="8"
             StrokeShape="RoundRectangle 12">
 
-                <Grid RowDefinitions="Auto,*"
-                  RowSpacing="6">
+                <Grid RowDefinitions="Auto,Auto,*"
+                  RowSpacing="0">
 
                     <Label
                     Grid.Row="0"
@@ -182,34 +182,70 @@
                     FontAttributes="Bold"
                     TextColor="#0F172A" />
 
+                    <BoxView
+                     Grid.Row="1"
+                     Margin="0,4"
+                      HeightRequest="1"
+                      BackgroundColor="#75777B"
+                      Opacity="0.4" />
+
                     <CollectionView
-                        Grid.Row="1"
+                        Grid.Row="2"
                         ItemsSource="{Binding Items}"
-                        VerticalOptions="Fill">
+                        SelectionMode="None">
 
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Grid
+                                    RowDefinitions="*,*,*,*,*"
                                     ColumnDefinitions="*,Auto"
-                                    Padding="6">
+                                    Padding="0">
 
                                     <Label
+                                        Grid.Row="0"
                                         Grid.Column="0"
                                         Text="{Binding Barcode}"
                                         FontAttributes="Bold"
-                                        TextColor="#0F172A" />
+                                        TextColor="DarkRed" />
 
                                     <Label
+                                        Grid.Row="0"
                                         Grid.Column="1"
                                         Text="{Binding Whouse}"
                                         FontAttributes="Bold"
                                         TextColor="#0F172A" />
 
-                                    <!--<Label
-                                        Grid.Column="2"
-                                        Text="{Binding Quantity}"
-                                        TextColor="#334155" />-->
-                                </Grid>
+
+                                    <Label 
+                                        Grid.Row="1" Grid.ColumnSpan="2"
+                                        Text="{Binding ItemCode}"
+                                           FontSize="12"
+                                           TextColor="#0F172A" />
+                                    <!--<Label 
+                                        Grid.Row="2" Grid.ColumnSpan="2"
+                                        Text="{Binding ItemName}"
+                                            FontSize="12"
+                                            TextColor="#0F172A" />-->
+
+                                    <Label 
+                                         Grid.Row="2" Grid.ColumnSpan="2"
+                                         Text="{Binding LineA}"
+                                            FontSize="10"
+                                            TextColor="#0F172A" />
+                                    <Label 
+                                          Grid.Row="3" Grid.ColumnSpan="2"
+                                          Text="{Binding LineB}"
+                                             FontSize="10"
+                                             TextColor="#0F172A" />
+                                    <BoxView
+                                         Grid.Row="4" Grid.ColumnSpan="2"
+                                         Margin="0,4"
+                                          HeightRequest="1"
+                                          BackgroundColor="#75777B"
+                                          Opacity="0.4" />
+                                                            </Grid>
+
+                
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
 
@@ -230,8 +266,8 @@
             Padding="8"
             StrokeShape="RoundRectangle 12">
 
-                <Grid RowDefinitions="Auto,*"
-                  RowSpacing="6">
+                <Grid RowDefinitions="Auto,Auto,*"
+                  RowSpacing="0">
 
                     <Label
                     Grid.Row="0"
@@ -239,10 +275,56 @@
                     FontAttributes="Bold"
                     TextColor="#065F46" />
 
+                    <BoxView
+                        Grid.Row="1"
+                        Margin="0,4"
+                         HeightRequest="1"
+                         BackgroundColor="#75777B"
+                         Opacity="0.4" />
+
                     <CollectionView                        
-                    Grid.Row="1"
-                    ItemsSource="{Binding ValidatedStocks}"
-                    VerticalOptions="Fill" />
+                        Grid.Row="2"
+                        ItemsSource="{Binding ValidatedStocks}"
+                        VerticalOptions="Fill">
+                        <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                RowDefinitions="*,*,*,*"
+                                ColumnDefinitions="*"
+                                Padding="0">
+
+                                                    <Label
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Text="{Binding ItemCode}"
+                                    FontAttributes="Bold"
+                                    TextColor="#333333" />
+
+                                    <Label
+                                      Grid.Row="1"
+                                      Grid.Column="0"
+                                      FontSize="10"
+                                      Text="{Binding ItemName}"                                      
+                                      TextColor="#333333" />
+
+                                   <Label
+                                      Grid.Row="2"
+                                      Grid.Column="1"
+                                      Text="{Binding LineA}"
+                                             FontSize="10"
+                                             TextColor="#0F172A" />
+
+                                    <BoxView
+                                     Grid.Row="3" 
+                                     Margin="0,4"
+                                      HeightRequest="1"
+                                      BackgroundColor="#75777B"
+                                      Opacity="0.4" />      
+                            </Grid>
+
+                        </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </Grid>
             </Border>
 

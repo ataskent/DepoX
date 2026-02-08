@@ -159,14 +159,14 @@ public class SplitRowVm : INotifyPropertyChanged
     public string UnitCode
     {
         get => _unitCode;
-        set { if (_unitCode == value) return; _unitCode = value; OnPropertyChanged(); OnPropertyChanged(nameof(SummaryLine)); }
+        set { if (_unitCode == value) return; _unitCode = value; OnPropertyChanged(); OnPropertyChanged(nameof(SummaryLinea)); }
     }
 
     decimal _quantity;
     public decimal Quantity
     {
         get => _quantity;
-        set { if (_quantity == value) return; _quantity = value; OnPropertyChanged(); OnPropertyChanged(nameof(SummaryLine)); }
+        set { if (_quantity == value) return; _quantity = value; OnPropertyChanged(); OnPropertyChanged(nameof(SummaryLinea)); }
     }
 
     // seçim listeleri
@@ -178,7 +178,9 @@ public class SplitRowVm : INotifyPropertyChanged
 
     // ✅ XAML BUNU KULLANIYOR
     public string SummaryLine =>
-        $"Parti: {LotCode}  - Renk : {ColorCode}  - Miktar : {Quantity} {UnitCode}";
+        $"Parti: {LotCode}  - Renk : {ColorCode}";
+    public string SummaryLinea =>
+        $"Miktar : {Quantity} {UnitCode}";
 
     public event PropertyChangedEventHandler? PropertyChanged;
     public void OnPropertyChanged([CallerMemberName] string? name = null)

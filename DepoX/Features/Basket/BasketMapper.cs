@@ -14,6 +14,7 @@ public static class BasketMapper
             CreatedAt = vm.CreatedAt,
             Items = vm.Items.Select(x => new BasketItem
             {
+                WhouseCode = x.Whouse,
                 Barcode = x.Barcode,
                 Quantity = x.Quantity
             }).ToList()
@@ -30,7 +31,7 @@ public static class BasketMapper
     }
     public static WhouseVm ToModel(this ErpWhouseDto dto)
     {
-        return new WhouseVm 
+        return new WhouseVm
         {
             Code = dto.Code,
             Name = dto.Name
@@ -40,9 +41,30 @@ public static class BasketMapper
     {
         return new BasketItemVm
         {
+
             Barcode = dto.Barcode,
             Quantity = dto.Quantity,
-            Whouse = dto.FromWarehouseCode
+            Whouse = dto.FromWarehouseCode,
+            LotCode = dto.LotCode,
+            ColorCode = dto.ColorCode,
+            UnitCode = dto.UnitCode,
+            ItemCode = dto.ItemCode,
+            ItemName = dto.ItemName,
+            Qty = dto.Qty
+        };
+    }
+    public static ValidatedStockVm ToModelVS(this BasketItemDto dto)
+    {
+        return new ValidatedStockVm
+        {
+
+            Quantity = dto.Qty,
+            LotCode = dto.LotCode,
+            ColorCode = dto.ColorCode,
+            UnitCode = dto.UnitCode,
+            ItemCode = dto.ItemCode,
+            ItemName = dto.ItemName,
+            Qty = dto.Qty
         };
     }
 }
@@ -59,6 +81,7 @@ public static class BasketErpMapper
             CreatedAt = draft.CreatedAt,
             Items = draft.Items.Select(x => new ErpBasketItem
             {
+                FromWarehouseCode = x.WhouseCode,
                 Barcode = x.Barcode,
                 Quantity = x.Quantity
             }).ToArray()

@@ -38,9 +38,9 @@ public class BasketService : IBasketService
 
     }
 
-    public Task<ErpResult<bool>> ClearBasketDataAsync(string basketCode, CancellationToken cancellationToken = default)
+    public Task<ErpResult<bool>> ClearBasketDataAsync(string basketCode, string whouseCode, CancellationToken cancellationToken = default)
     {
-        var result = _erpGateway.ClearBasketDataAsync(basketCode, cancellationToken);
+        var result = _erpGateway.ClearBasketDataAsync(basketCode, whouseCode, cancellationToken);
         return result;
 
     }
@@ -57,6 +57,6 @@ public interface IBasketService
         CancellationToken cancellationToken = default);
 
     Task<ErpResult<List<BasketItemDto>>> GetBasketBarcodeDataAsync(string basketCode, CancellationToken cancellationToken = default);
-    Task<ErpResult<bool>> ClearBasketDataAsync(string basketCode, CancellationToken cancellationToken = default);
+    Task<ErpResult<bool>> ClearBasketDataAsync(string basketCode, string whouseCode, CancellationToken cancellationToken = default);
 
 }

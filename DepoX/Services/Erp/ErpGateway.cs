@@ -10,12 +10,15 @@ namespace DepoX.Services.Erp
 {
     public class ErpGateway : IErpGateway
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient; 
+        private const string BaseUrl = "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx";
 
         public ErpGateway(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
+
+        #region IErpGateway IMPLEMENTASYONU
 
         // 🔹 Generic ERP POST helper (SADECE Gateway içi)
         private async Task<ErpResult<T>> PostAsync<T>(
@@ -84,19 +87,7 @@ namespace DepoX.Services.Erp
             }
         }
 
-        // 🔹 IErpGateway IMPLEMENTASYONU
-        public Task<ErpResult<ErpBasketDraft>> SaveBasketAsync(
-            ErpBasketDraft request,
-            CancellationToken cancellationToken = default)
-        {
-            const string url =
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveBasket";
-
-            return PostAsync<ErpBasketDraft>(
-                url,
-                new { draft = request },
-                cancellationToken);
-        }
+        #endregion
 
         #region Split
 
@@ -105,7 +96,7 @@ namespace DepoX.Services.Erp
             CancellationToken cancellationToken = default)
         {
             var url =
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetBarcodeDetail";
+                $"{BaseUrl}/GetBarcodeDetail";
 
             return await PostAsync<ErpBarcodeDetailDto>(
                 url,
@@ -118,7 +109,7 @@ namespace DepoX.Services.Erp
            CancellationToken cancellationToken = default)
         {
             var url =
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveBarcodeSplit";
+                $"{BaseUrl}/SaveBarcodeSplit";
 
             return await PostAsync<ErpBarcodeDetailDto>(
                 url,
@@ -130,7 +121,7 @@ namespace DepoX.Services.Erp
             CancellationToken cancellationToken = default)
         {
             var url =
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/CreateBarcode";
+                $"{BaseUrl}/CreateBarcode";
 
             return await PostAsync<ErpBarcodeDetailDto>(
                 url,
@@ -145,7 +136,7 @@ namespace DepoX.Services.Erp
         public Task<ErpResult<NewBarcodeMetaDto>> GetNewBarcodeMetaAsync(
             CancellationToken cancellationToken = default)
             => PostAsync<NewBarcodeMetaDto>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetNewBarcodeMeta",
+                $"{BaseUrl}/GetNewBarcodeMeta",
                 new { }, cancellationToken);
 
         // ===============================
@@ -156,18 +147,32 @@ namespace DepoX.Services.Erp
             string itemCode,
             CancellationToken cancellationToken = default)
             => PostAsync<List<string>>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetLotsByItem",
+                $"{BaseUrl}/GetLotsByItem",
                 new { itemCode }, cancellationToken);
 
         #endregion Split
 
         #region Basket
 
+        // 🔹 IErpGateway IMPLEMENTASYONU
+        public Task<ErpResult<ErpBasketDraft>> SaveBasketAsync(
+            ErpBasketDraft request,
+            CancellationToken cancellationToken = default)
+        {
+            const string url =
+                $"{BaseUrl}/SaveBasket";
+
+            return PostAsync<ErpBasketDraft>(
+                url,
+                new { draft = request },
+                cancellationToken);
+        }
+
         public Task<ErpResult<List<ErpWhouseDto>>> GetWhousesAsync(
     CancellationToken cancellationToken = default)
         {
             return PostAsync<List<ErpWhouseDto>>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetWhouses",
+                $"{BaseUrl}/GetWhouses",
                 new { },
                 cancellationToken);
         }
@@ -176,7 +181,7 @@ namespace DepoX.Services.Erp
 CancellationToken cancellationToken = default)
         {
             return PostAsync<ErpBasketWhouseDto>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetBasketWhouseData",
+                $"{BaseUrl}/GetBasketWhouseData",
                 new { },
                 cancellationToken);
         }
@@ -186,18 +191,18 @@ CancellationToken cancellationToken = default)
      CancellationToken cancellationToken = default)
         {
             return PostAsync<List<BasketItemDto>>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetBasketBarcodeData",
+                $"{BaseUrl}/GetBasketBarcodeData",
                 new { BasketBarcode = basketCode },
                 cancellationToken);
         }
 
         public Task<ErpResult<bool>> ClearBasketDataAsync(
-     string basketCode,
+     string basketCode, string whouseCode, 
      CancellationToken cancellationToken = default)
         {
             return PostAsync<bool>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/CloseBasketData",
-                new { BasketBarcode = basketCode },
+                $"{BaseUrl}/CloseBasketData",
+                new { BasketBarcode = basketCode , WhouseCode = whouseCode },                
                 cancellationToken);
         }
 
@@ -206,7 +211,7 @@ CancellationToken cancellationToken = default)
 CancellationToken cancellationToken = default)
         {
             return PostAsync<ErpOptionalDto>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetOptionalData",
+                $"{BaseUrl}/GetOptionalData",
                 new { },
                 cancellationToken);
         }
@@ -215,7 +220,7 @@ CancellationToken cancellationToken = default)
 CancellationToken cancellationToken = default)
         {
             return PostAsync<TransferList>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetTransfer",
+                $"{BaseUrl}/GetTransfer",
                 new { },
                 cancellationToken);
         }
@@ -225,7 +230,7 @@ CancellationToken cancellationToken = default)
 CancellationToken cancellationToken = default)
         {
             return PostAsync<TransferData>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetTransferData",
+                $"{BaseUrl}/GetTransferData",
                 new { TransferCode = transferCode },
                 cancellationToken);
         }
@@ -235,7 +240,7 @@ CancellationToken cancellationToken = default)
 CancellationToken cancellationToken = default)
         {
             return PostAsync<TransferData>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveTransferData",
+                $"{BaseUrl}/SaveTransferData",
                 new { dto = transferData },
                 cancellationToken);
 
@@ -247,7 +252,7 @@ CancellationToken cancellationToken = default)
             CancellationToken cancellationToken = default)
         {
             return PostAsync<CountM>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/SaveCountData",
+                $"{BaseUrl}/SaveCountData",
                 new { dto = countM },
                 cancellationToken);
 
@@ -257,7 +262,7 @@ CancellationToken cancellationToken = default)
             CancellationToken cancellationToken = default)
         {
             return PostAsync<CountList>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetCount",
+                $"{BaseUrl}/GetCount",
                 new { },
                 cancellationToken);
         }
@@ -267,13 +272,48 @@ CancellationToken cancellationToken = default)
             CancellationToken cancellationToken = default)
         {
             return PostAsync<CountM>(
-                "http://10.41.1.174:8061/customprg/xml/terminalservice.asmx/GetCountData",
+                $"{BaseUrl}/GetCountData",
                 new { CountCode = countCode },
                 cancellationToken);
         }
 
 
         #endregion Basket
+
+        #region General
+        public async Task<bool> IsConnectAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(
+                    HttpMethod.Post,
+                    $"{BaseUrl}/IsConnect")
+                {
+                    Content = new FormUrlEncodedContent(
+                        Array.Empty<KeyValuePair<string, string>>())
+                };
+
+                var response = await _httpClient.SendAsync(
+                    request,
+                    cancellationToken);
+
+                if (!response.IsSuccessStatusCode)
+                    return false;
+
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+
+                // ASMX dönüşleri:
+                // <boolean>true</boolean>
+                // veya <string>true</string>
+                // veya JSON string içinde true
+                return content.Contains("true", StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        #endregion
 
     }
 }

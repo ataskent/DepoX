@@ -113,7 +113,12 @@ public class SplitViewModel : INotifyPropertyChanged
     public string OriginalLine2 =>
         Original == null
             ? ""
-            : $"Parti: {Original.LotCode} · Renk: {Original.ColorCode} · Miktar: {Original.Quantity} {Original.UnitCode}";
+            : $"Parti: {Original.LotCode} · Renk: {Original.ColorCode}";
+
+    public string OriginalLine2a =>
+        Original == null
+            ? ""
+            : $"Miktar: {Original.Quantity} {Original.UnitCode}";
 
     public ObservableCollection<SplitRowVm> ExistingSplits { get; } = new();
     public ObservableCollection<SplitRowVm> NewSplits { get; } = new();
@@ -199,6 +204,7 @@ public class SplitViewModel : INotifyPropertyChanged
 
         OnPropertyChanged(nameof(Original));
         OnPropertyChanged(nameof(OriginalLine2));
+        OnPropertyChanged(nameof(OriginalLine2a));
         OnPropertyChanged(nameof(HasOriginalBarcode));
 
         foreach (var e in _loadedModel.ExistingSplits)
@@ -270,6 +276,7 @@ public class SplitViewModel : INotifyPropertyChanged
             nameof(Original),
             nameof(HasOriginalBarcode),
             nameof(OriginalLine2),
+            nameof(OriginalLine2a),
             nameof(MixedItems),
             nameof(DraftRow),
             nameof(IsDraftOpen),
@@ -383,6 +390,7 @@ public class SplitViewModel : INotifyPropertyChanged
             nameof(OriginalBarcode),
             nameof(HasOriginalBarcode),
             nameof(OriginalLine2),
+            nameof(OriginalLine2a),
             nameof(MixedItems),
             nameof(CurrentDraftMode),
             nameof(ShowBottomSaveButton)
@@ -586,7 +594,7 @@ public class SplitViewModel : INotifyPropertyChanged
         ExistingSplits.Clear();
         NewSplits.Clear();
 
-        Notify(nameof(Original), nameof(OriginalLine2), nameof(HasOriginalBarcode), nameof(MixedItems));
+        Notify(nameof(Original), nameof(OriginalLine2), nameof(OriginalLine2a), nameof(HasOriginalBarcode), nameof(MixedItems));
     }
 
     void Notify(params string[] props)

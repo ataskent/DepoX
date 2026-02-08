@@ -27,12 +27,14 @@ namespace DepoX
                 });
 
             // ===== Local / Offline =====
-          
+
             // ===== Network =====
-            builder.Services.AddHttpClient();
-            // ===== ERP =====
-            builder.Services.AddSingleton(new HttpClient());
-            builder.Services.AddSingleton<IErpGateway, ErpGateway>();
+            builder.Services.AddHttpClient<IErpGateway, ErpGateway>();
+            //builder.Services.AddHttpClient();
+            //// ===== ERP =====
+            //builder.Services.AddSingleton(new HttpClient());
+            //builder.Services.AddSingleton<IErpGateway, ErpGateway>();
+            builder.Services.AddSingleton<AppShell>();
             //builder.Services.AddSingleton<IBarcodeCache, BarcodeCache>();
             // ===== Application Services =====
             builder.Services.AddTransient<IBasketService, BasketService>();

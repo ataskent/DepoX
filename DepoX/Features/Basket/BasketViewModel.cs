@@ -259,7 +259,16 @@ public class BasketViewModel : INotifyPropertyChanged
             return;
 
         foreach (var dto in erpResult.Data)
-            Items.Add(BasketMapper.ToModel(dto));
+        {
+            if (string.IsNullOrEmpty(dto.Barcode))
+            {
+                ValidatedStocks.Add(BasketMapper.ToModelVS(dto));
+            }
+            else
+            {
+                Items.Add(BasketMapper.ToModel(dto));
+            }
+        }
     }
 
 
@@ -320,13 +329,24 @@ public class BasketViewModel : INotifyPropertyChanged
         Items.Clear();
         ValidatedStocks.Clear();
 
-        var Task = ClearBasketAsync(BasketNo);
+        if(string.IsNullOrEmpty(BasketNo))
+        {
+            ErrorMessage = "Sepet Seçiniz";
+            return;
+        }
+        else if(SelectedWhouse == null || string.IsNullOrEmpty(SelectedWhouse!.Code))
+        {
+            ErrorMessage = "Depo Seçiniz";
+            return;
+        }
+
+        var Task = ClearBasketAsync(BasketNo, SelectedWhouse!.Code);
     }
 
-    public async Task ClearBasketAsync(string basketCode)
+    public async Task ClearBasketAsync(string basketCode, string whouseCode)
     {
         var erpResult = await _basketService
-            .ClearBasketDataAsync(basketCode);
+            .ClearBasketDataAsync(basketCode, whouseCode);
 
         if (erpResult?.Data == null)
             return;

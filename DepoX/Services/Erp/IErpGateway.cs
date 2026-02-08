@@ -5,9 +5,9 @@ namespace DepoX.Services.Erp
 {
     public interface IErpGateway
     {
-        Task<ErpResult<ErpBasketDraft>> SaveBasketAsync(
-            ErpBasketDraft draft,
-            CancellationToken cancellationToken = default);
+        #region General
+        Task<bool> IsConnectAsync(CancellationToken cancellationToken);
+        #endregion General
 
         #region Split
         Task<ErpResult<ErpBarcodeDetailDto>> GetBarcodeDetailAsync(
@@ -32,7 +32,10 @@ namespace DepoX.Services.Erp
         #endregion Split
 
         #region Basket
-        
+        Task<ErpResult<ErpBasketDraft>> SaveBasketAsync(
+            ErpBasketDraft draft,
+            CancellationToken cancellationToken = default);
+
         Task<ErpResult<List<ErpWhouseDto>>> GetWhousesAsync(
             CancellationToken cancellationToken = default);
 
@@ -44,7 +47,7 @@ namespace DepoX.Services.Erp
         CancellationToken cancellationToken = default);
 
         Task<ErpResult<bool>> ClearBasketDataAsync(
-        string basketCode,
+        string basketCode, string whouseCode,
         CancellationToken cancellationToken = default);
 
         Task<ErpResult<ErpOptionalDto>> GetOptionalDataAsync(
@@ -79,6 +82,7 @@ namespace DepoX.Services.Erp
             CancellationToken cancellationToken = default);
 
         #endregion
+
 
     }
 

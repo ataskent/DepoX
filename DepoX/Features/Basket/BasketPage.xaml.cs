@@ -129,7 +129,7 @@ public partial class BasketPage : ContentPage
                     result.Message ?? "Sepet baþarýyla kaydedildi.",
                     "Tamam");
 
-                _vm.ClearBasket();
+                //_vm.ClearBasket();
             }
             else
             {

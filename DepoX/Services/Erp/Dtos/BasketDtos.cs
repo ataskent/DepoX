@@ -11,6 +11,7 @@ public class ErpBasketDraft
 
 public class ErpBasketItem
 {
+    public string FromWarehouseCode { get; set; } = string.Empty;
     public string Barcode { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
 }
@@ -50,8 +51,13 @@ public class ErpBasketWhouseDto
 public class BasketItemDto
 {
     public string Barcode { get; set; } = string.Empty;
-    public string StockCode { get; set; } = string.Empty;
+    public string LotCode { get; set; } = string.Empty;
+    public string ColorCode { get; set; } = string.Empty;
+    public string UnitCode { get; set; } = string.Empty;
+    public string ItemCode { get; set; } = string.Empty;
+    public string ItemName { get; set; } = string.Empty;
     public decimal Quantity { get; set; } = 0;
+    public decimal Qty { get; set; } = 0;
     public string FromWarehouseCode { get; set; } = string.Empty;
     public string LocationCode { get; set; } = string.Empty;
 }

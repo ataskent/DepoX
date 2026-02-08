@@ -1,16 +1,23 @@
-﻿namespace DepoX;
+﻿using DepoX.Services.Erp;
+
+namespace DepoX;
 
 public partial class AppShell : Shell
 {
-    public AppShell()
+    private readonly IErpGateway _erpGateway;
+    private bool _hasCheckedServices;
+
+    public AppShell(IErpGateway erpGateway)
     {
         InitializeComponent();
+        _erpGateway = erpGateway;
+
         RegisterRoutes();
+        Loaded += OnLoaded;
     }
 
     private static void RegisterRoutes()
     {
-        // ===== OPERASYON MODÜLLERİ =====
         Routing.RegisterRoute(
             nameof(Features.Count.CountPage),
             typeof(Features.Count.CountPage));
@@ -26,5 +33,26 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(
             nameof(Features.FromWorder.FromWorderPage),
             typeof(Features.FromWorder.FromWorderPage));
+    }
+
+    private async void OnLoaded(object? sender, EventArgs e)
+    {
+        if (_hasCheckedServices)
+            return;
+
+        _hasCheckedServices = true;
+        Loaded -= OnLoaded;
+
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
+
+        var isConnected = await _erpGateway.IsConnectAsync(cts.Token);
+
+        if (!isConnected)
+        {
+            await DisplayAlert(
+                "Ağ Bağlantısı Yok",
+                "ERP servisine ulaşılamıyor.\n\nLütfen Wi-Fi / VPN bağlantısını kontrol edin.",
+                "Tamam");
+        }
     }
 }
