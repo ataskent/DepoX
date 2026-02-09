@@ -64,6 +64,7 @@ public static class CountMapper
     {
         return new ItemVm
         {
+            UnitCode = vm.UnitCode,
             Quantity = vm.Quantity,
             Code = vm.Code,
             Name = vm.Name
@@ -74,6 +75,11 @@ public static class CountMapper
     {
         return new BarcodeVm
         {
+            ItemCode = vm.ItemCode,
+            ItemName = vm.ItemName,
+            ColorCode = vm.ColorCode,
+            LotCode = vm.LotCode,
+            UnitCode = vm.UnitCode,
             Code = vm.Code,
             Quantity = vm.Quantity,
             IsEditing = vm.IsEditing,

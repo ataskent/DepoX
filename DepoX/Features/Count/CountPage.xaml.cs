@@ -1,19 +1,23 @@
-﻿namespace DepoX.Features.Count;
+﻿using DepoX.Services.Dialog;
+
+namespace DepoX.Features.Count;
 
 public partial class CountPage : ContentPage
 {
     private readonly CountViewModel _vm;
     private readonly ICountService _countService;
+    private readonly ILoadingService _loadingService;
     private CancellationTokenSource? _saveCts;
 
     public CountPage(
         CountViewModel vm,
-        ICountService countService)
+        ICountService countService, ILoadingService loadingService)
     {
         InitializeComponent();
 
         _vm = vm;
         _countService = countService;
+        _loadingService = loadingService;
         BindingContext = _vm;
     }
 
@@ -84,7 +88,7 @@ public partial class CountPage : ContentPage
         if (_vm.IsBusy)
             return;
 
-        if (_vm.Items.Count == 0)
+        if (_vm.Barcodes.Count == 0)
         {
             await DisplayAlert(
                 "Uyarı",
@@ -99,6 +103,8 @@ public partial class CountPage : ContentPage
         try
         {
             _vm.IsBusy = true;
+            _loadingService.Show("Depo ve sayım fişi kaydediliyor...");
+            await Task.Yield(); // UI güncellemesi için
 
             CountMVm countMVm = new CountMVm();
             countMVm.DocNo = _vm.CountNo;
@@ -117,6 +123,8 @@ public partial class CountPage : ContentPage
                     "Tamam");
 
                 _vm.Clear();
+                _vm.Barcodes.Clear();
+                _vm.Items.Clear();
 
                 foreach (var item in result.Data.Barcodes)
                 {
@@ -149,6 +157,7 @@ public partial class CountPage : ContentPage
         finally
         {
             _vm.IsBusy = false;
+            _loadingService.Hide();
         }
     }
 

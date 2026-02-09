@@ -1,15 +1,18 @@
-﻿using DepoX.Services.Erp.Dtos;
+﻿using DepoX.Services.Dialog;
+using DepoX.Services.Erp.Dtos;
 
 namespace DepoX.Features.Split;
 
 public partial class SplitPage : ContentPage
 {
     private readonly SplitViewModel _vm;
+    private readonly ILoadingService _loadingService;
 
-    public SplitPage(SplitViewModel vm)
+    public SplitPage(SplitViewModel vm, ILoadingService loadingService)
     {
         InitializeComponent();
         _vm = vm;
+        _loadingService = loadingService;
         BindingContext = _vm;
     }
 
@@ -25,8 +28,13 @@ public partial class SplitPage : ContentPage
         if (string.IsNullOrEmpty(barcode))
             return;
 
+        _loadingService.Show("Barkodlar yükleniyor...");
+        await Task.Yield();
+
         await _vm.LoadAsync(barcode);
         await ShowMessagesAsync();
+
+        _loadingService.Hide();
     }
 
     void OnOpenItemPicker(object sender, EventArgs e)
@@ -92,23 +100,18 @@ public partial class SplitPage : ContentPage
     private void OnAddSplitClicked(object sender, EventArgs e)
         => _vm.StartNewSplit();
 
-    //private async void OnConfirmDraft(object sender, EventArgs e)
-    //{
-    //    if (_vm.CurrentDraftMode == DraftMode.NewBarcode)
-    //        await _vm.CreateNewBarcodeAsync();
-    //    else
-    //        _vm.ConfirmDraft();
-
-    //    await ShowMessagesAsync();
-    //}
-
     private void OnCancelDraft(object sender, EventArgs e)
         => _vm.CancelDraft();
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
+        _loadingService.Show("Barkod bölme işlemi uygulanıyor...");
+        await Task.Yield(); // UI güncellemesi için
+
         await _vm.SaveAsync();
         await ShowMessagesAsync();
+
+        _loadingService.Hide();
     }
 
     private async Task ShowMessagesAsync()

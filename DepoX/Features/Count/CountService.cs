@@ -33,6 +33,12 @@ public class CountService : ICountService
         return result;
 
     }
+    public Task<ErpResult<bool>> DeleteCountDataAsync(string countCode, CancellationToken cancellationToken = default)
+    {
+        var result = _erpGateway.DeleteCountDataAsync(countCode, cancellationToken);
+        return result;
+
+    }
 }
 
 public interface ICountService
@@ -45,6 +51,9 @@ public interface ICountService
     CancellationToken cancellationToken = default);
 
     Task<ErpResult<CountM>> GetCountDataAsync(string countCode,
+        CancellationToken cancellationToken = default);
+
+    Task<ErpResult<bool>> DeleteCountDataAsync(string countCode,
         CancellationToken cancellationToken = default);
 }
 

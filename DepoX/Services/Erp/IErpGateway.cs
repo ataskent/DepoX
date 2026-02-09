@@ -85,6 +85,11 @@ namespace DepoX.Services.Erp
             string countCode,
             CancellationToken cancellationToken = default);
 
+
+        Task<ErpResult<bool>> DeleteCountDataAsync(
+            string countCode,
+            CancellationToken cancellationToken = default);
+
         #endregion
 
 

@@ -287,6 +287,16 @@ CancellationToken cancellationToken = default)
                 cancellationToken);
         }
 
+        public Task<ErpResult<bool>> DeleteCountDataAsync(
+          string countCode,
+          CancellationToken cancellationToken = default)
+        {
+            return PostAsync<bool>(
+                $"{BaseUrl}/DeleteCountData",
+                new { CountCode = countCode },
+                cancellationToken);
+        }
+
 
         #endregion Basket
 

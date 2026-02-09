@@ -31,14 +31,25 @@ public class WhouseVm
 public class ItemVm
 {
     public decimal Quantity { get; set; }
+    public string UnitCode { get; set; } = string.Empty;
     public string Code { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
+
+    public string LineA => $"Miktar : {Quantity} {UnitCode}".Trim();
 }
 
 public class BarcodeVm
 {
+    public string UnitCode { get; set; } = string.Empty;
+    public string ItemCode { get; set; } = string.Empty;
+    public string ItemName { get; set; } = string.Empty;
+    public string ColorCode { get; set; } = string.Empty;
+    public string LotCode { get; set; } = string.Empty;
     public string Code { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
     public bool IsEditing { get; set; }
     public bool IsSelected { get; set; }
+
+    public string LineA => $"Parti : {LotCode} - Renk : {ColorCode}".Trim();
+    public string LineB => $"Miktar : {Quantity} {UnitCode}".Trim();
 }

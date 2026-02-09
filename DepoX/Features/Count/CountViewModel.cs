@@ -1,5 +1,7 @@
-﻿using DepoX.Features.Basket;
+﻿using DepoX.Dtos;
+using DepoX.Features.Basket;
 using DepoX.Features.Count;
+using DepoX.Services.Dialog;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -12,6 +14,8 @@ public class CountViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private readonly ICountService _countService;
+    private readonly ILoadingService _loadingService;
+    private readonly IDialogService _dialogService;
 
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
@@ -28,8 +32,21 @@ public class CountViewModel : INotifyPropertyChanged
 
 
 
-    public void CreateNewCount()
+    public async void CreateNewCount()
     {
+        await CreateNewCountAsync();
+    }
+
+    public async Task CreateNewCountAsync()
+    {
+        var confirm = await _dialogService.ShowConfirmAsync(
+            "Yeni Kayıt",
+            "Yeni sayım fişi oluşturulacak. Devam etmek istiyor musunuz?"
+        );
+
+        if (!confirm)
+            return;
+
         ClientDraftId = Guid.NewGuid();
         CreatedAt = DateTime.Now;
 
@@ -42,20 +59,16 @@ public class CountViewModel : INotifyPropertyChanged
         RefreshCommands();
     }
 
+
     public void ClearCount()
     {
         Items.Clear();
         Barcodes.Clear();
     }
 
-    public void DeleteCount()
+    public async void DeleteCount()
     {
-        Items.Clear();
-        Barcodes.Clear();
-
-        CountNo = null;
-        SelectedWhouse = null;
-        ClientDraftId = Guid.NewGuid();
+        await DeleteCountAsync(CountNo);
 
         RefreshCommands();
     }
@@ -72,9 +85,11 @@ public class CountViewModel : INotifyPropertyChanged
     public ICommand OpenCountListCommand { get; }
     public ICommand OpenWhouseListCommand { get; }
 
-    public CountViewModel(ICountService countService)
+    public CountViewModel(ICountService countService, IDialogService dialogService, ILoadingService loadingService)
     {
         _countService = countService;
+        _dialogService = dialogService;
+        _loadingService = loadingService;
 
         NewCountCommand = new Command(CreateNewCount);
         ClearCountCommand = new Command(ClearCount, () => HasActiveCount);
@@ -243,6 +258,9 @@ public class CountViewModel : INotifyPropertyChanged
 
         try
         {
+            _loadingService.Show("Depo ve sayım fişi listesi yükleniyor...");
+            await Task.Yield(); // UI güncellemesi için
+
             IsBusy = true;
 
             var result = await _countService.GetCountAsync();
@@ -269,6 +287,7 @@ public class CountViewModel : INotifyPropertyChanged
         finally
         {
             IsBusy = false;
+            _loadingService.Hide();
         }
     }
 
@@ -303,29 +322,104 @@ public class CountViewModel : INotifyPropertyChanged
         var Task = LoadCountItemsAsync(CountNo);
     }
 
-    public async Task LoadCountItemsAsync(string countCode)
+    public async Task DeleteCountAsync(string countCode)
     {
-        var erpResult = await _countService
-            .GetCountDataAsync(countCode);
+        try
+        {
+            IsBusy = true;
 
-        Items.Clear();
-        Barcodes.Clear(); 
+            var confirm = await _dialogService.ShowConfirmAsync(
+                                   "Uyarı",
+                                   "Sayım fişi silinecek. Devam etmek istiyor musunuz?"
+                               );
 
-        if (erpResult?.Data == null)
-            return;
+            if (!confirm)
+                return;
 
-        CountNo = erpResult.Data.DocNo;
-        CreatedAt = erpResult.Data.CreatedAt;
-        SelectedWhouse = Whouses.Select(x => x).FirstOrDefault(x => x.Code == erpResult.Data.WhouseCode);
+            _loadingService.Show("Depo ve sayım fişi siliniyor...");
+            await Task.Yield(); // UI güncellemesi için
 
-        foreach (var dto in erpResult.Data.Items)
-            Items.Add(CountMapper.ToModel(dto));
-        foreach (var dto in erpResult.Data.Barcodes)
-            Barcodes.Add(CountMapper.ToModel(dto)); 
+            var erpResult = await _countService
+                .DeleteCountDataAsync(countCode);
 
+
+            if (erpResult?.Data == null)
+            {
+                await _dialogService.ShowAlertAsync("Uyarı", "Servisten bilgi alınamadı.");
+                return;
+            }
+
+            if(erpResult.Success)
+            {
+
+                await _dialogService.ShowAlertAsync("Uyarı", "Sayım Fişi Silindi");
+                
+                Items.Clear();
+                Barcodes.Clear();
+
+                CountNo = null;
+                SelectedWhouse = null;
+                ClientDraftId = Guid.NewGuid();
+            }
+            else
+            {
+                await _dialogService.ShowAlertAsync("Hata", erpResult.Message);
+            }
+
+            
+
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Sayım fişi silinirken hata: {ex.Message}";
+            await _dialogService.ShowAlertAsync("Hata", ErrorMessage);
+
+        }
+        finally
+        {
+            IsBusy = false;
+            _loadingService.Hide();
+        }
     }
 
+    public async Task LoadCountItemsAsync(string countCode)
+    {
+        try
+        {
+            IsBusy = true;
 
+            _loadingService.Show("Depo ve sayım fişi yükleniyor...");
+            await Task.Yield(); // UI güncellemesi için
+
+            var erpResult = await _countService
+                .GetCountDataAsync(countCode);
+
+            Items.Clear();
+            Barcodes.Clear();
+
+            if (erpResult?.Data == null)
+                return;
+
+            CountNo = erpResult.Data.DocNo;
+            CreatedAt = erpResult.Data.CreatedAt;
+            SelectedWhouse = Whouses.Select(x => x).FirstOrDefault(x => x.Code == erpResult.Data.WhouseCode);
+
+            foreach (var dto in erpResult.Data.Items)
+                Items.Add(CountMapper.ToModel(dto));
+            foreach (var dto in erpResult.Data.Barcodes)
+                Barcodes.Add(CountMapper.ToModel(dto));
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Sayım fişi yüklenirken hata: {ex.Message}";
+
+        }
+        finally
+        {
+            IsBusy = false;
+            _loadingService.Hide();
+        }
+    }
 
     public void CloseWhousePicker()
     {
