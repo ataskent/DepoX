@@ -44,6 +44,12 @@ public class BasketService : IBasketService
         return result;
 
     }
+    public Task<ErpResult<bool>> DeleteBasketDataAsync(string basketCode, CancellationToken cancellationToken = default)
+    {
+        var result = _erpGateway.DeleteBasketDataAsync(basketCode, cancellationToken);
+        return result;
+
+    }
 
 }
 
@@ -58,5 +64,6 @@ public interface IBasketService
 
     Task<ErpResult<List<BasketItemDto>>> GetBasketBarcodeDataAsync(string basketCode, CancellationToken cancellationToken = default);
     Task<ErpResult<bool>> ClearBasketDataAsync(string basketCode, string whouseCode, CancellationToken cancellationToken = default);
+    Task<ErpResult<bool>> DeleteBasketDataAsync(string basketCode, CancellationToken cancellationToken = default);
 
 }

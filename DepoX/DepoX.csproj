@@ -62,16 +62,22 @@
 	<ItemGroup>
 	  <AndroidResource Remove="Dtos\**" />
 	  <AndroidResource Remove="Models\Count\**" />
+	  <AndroidResource Remove="Services\NewFolder\**" />
 	  <Compile Remove="Dtos\**" />
 	  <Compile Remove="Models\Count\**" />
+	  <Compile Remove="Services\NewFolder\**" />
 	  <EmbeddedResource Remove="Dtos\**" />
 	  <EmbeddedResource Remove="Models\Count\**" />
+	  <EmbeddedResource Remove="Services\NewFolder\**" />
 	  <MauiCss Remove="Dtos\**" />
 	  <MauiCss Remove="Models\Count\**" />
+	  <MauiCss Remove="Services\NewFolder\**" />
 	  <MauiXaml Remove="Dtos\**" />
 	  <MauiXaml Remove="Models\Count\**" />
+	  <MauiXaml Remove="Services\NewFolder\**" />
 	  <None Remove="Dtos\**" />
 	  <None Remove="Models\Count\**" />
+	  <None Remove="Services\NewFolder\**" />
 	</ItemGroup>
 
 	<ItemGroup>

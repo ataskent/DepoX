@@ -53,6 +53,10 @@ namespace DepoX.Services.Erp
         Task<ErpResult<ErpOptionalDto>> GetOptionalDataAsync(
             CancellationToken cancellationToken = default);
 
+        Task<ErpResult<bool>> DeleteBasketDataAsync(
+        string basketCode,
+        CancellationToken cancellationToken = default);
+
         #endregion Basket
 
         #region FromWorder

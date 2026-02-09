@@ -206,6 +206,16 @@ CancellationToken cancellationToken = default)
                 cancellationToken);
         }
 
+        public Task<ErpResult<bool>> DeleteBasketDataAsync(
+   string basketCode,
+   CancellationToken cancellationToken = default)
+        {
+            return PostAsync<bool>(
+                $"{BaseUrl}/DeleteBasketData",
+                new { BasketBarcode = basketCode },
+                cancellationToken);
+        }
+
 
         public Task<ErpResult<ErpOptionalDto>> GetOptionalDataAsync(
 CancellationToken cancellationToken = default)

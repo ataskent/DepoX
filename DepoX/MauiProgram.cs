@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Maui;
 using DepoX.Features.Basket;
+using DepoX.Features.Count;
 using DepoX.Features.FromWorder;
 using DepoX.Features.Shared;
-using DepoX.Features.Count;
 using DepoX.Features.Split;
+using DepoX.Services.Dialog;
 using DepoX.Services.Erp;
 using DepoX.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +36,9 @@ namespace DepoX
             //builder.Services.AddSingleton(new HttpClient());
             //builder.Services.AddSingleton<IErpGateway, ErpGateway>();
             builder.Services.AddSingleton<AppShell>();
+            builder.Services.AddSingleton<IDialogService, DialogService>();
+            builder.Services.AddSingleton<ILoadingService, LoadingService>();
+
             //builder.Services.AddSingleton<IBarcodeCache, BarcodeCache>();
             // ===== Application Services =====
             builder.Services.AddTransient<IBasketService, BasketService>();

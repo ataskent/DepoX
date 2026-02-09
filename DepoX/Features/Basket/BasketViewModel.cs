@@ -1,7 +1,10 @@
+﻿using DepoX.Dtos;
+using DepoX.Services.Dialog;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace DepoX.Features.Basket;
@@ -10,7 +13,11 @@ public class BasketViewModel : INotifyPropertyChanged
 {
     private readonly IBasketService _basketService;
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged; 
+    private readonly IDialogService _dialog; 
+    private readonly ILoadingService _loading;
+
+
     void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
@@ -79,7 +86,7 @@ public class BasketViewModel : INotifyPropertyChanged
 
     public string SelectedWhouseName => SelectedWhouse?.Name ?? "";
 
-    // Barkod okutma �art�
+    // Barkod okutma şartı
     public bool CanScanBarcode =>
         HasActiveBasket && SelectedWhouse != null;
 
@@ -147,7 +154,7 @@ public class BasketViewModel : INotifyPropertyChanged
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
 
     // =========================
-    // ?? L�STELER
+    // ?? LİSTELER
     // =========================
 
     public ObservableCollection<BasketItemVm> Items { get; } = new();
@@ -163,9 +170,11 @@ public class BasketViewModel : INotifyPropertyChanged
     public ICommand OpenBasketListCommand { get; }
     public ICommand OpenWhouseListCommand { get; }
 
-    public BasketViewModel(IBasketService basketService)
+    public BasketViewModel(IBasketService basketService, IDialogService dialogService, ILoadingService loadingService)
     {
         _basketService = basketService;
+        _dialog = dialogService;
+        _loading = loadingService;  
 
         NewBasketCommand = new Command(CreateNewBasket);
         ClearBasketCommand = new Command(ClearBasket, () => HasActiveBasket);
@@ -173,12 +182,12 @@ public class BasketViewModel : INotifyPropertyChanged
         OpenBasketListCommand = new Command(OpenBasketList);
         OpenWhouseListCommand = new Command(OpenWhouseList);
 
-        // Sayfa y�klendi�inde depo listesini y�kle
+        // Sayfa yüklendiğinde depo listesini yükle
         //_ = LoadWhousesAsync();
     }
 
     // =========================
-    // ?? WHOUSE ��LEMLER�
+    // ?? WHOUSE İŞLEMLERİ
     // =========================
 
     public async Task LoadInitialAsync()
@@ -209,7 +218,7 @@ public class BasketViewModel : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Depo listesi y�klenirken hata: {ex.Message}";
+            ErrorMessage = $"Depo listesi yüklenirken hata: {ex.Message}";
         }
         finally
         {
@@ -226,7 +235,7 @@ public class BasketViewModel : INotifyPropertyChanged
     {
         if (!IsOpen)
         {
-            ErrorMessage = "�nce sepet olu�turun.";
+            ErrorMessage = "Önce sepet oluşturun.";
             return;
         }
 
@@ -284,7 +293,7 @@ public class BasketViewModel : INotifyPropertyChanged
     }
 
     // =========================
-    // ?? SEPET ��LEMLER�
+    // ?? SEPET İŞLEMLERİ
     // =========================
 
     public void AddBarcode(string barcode)
@@ -324,36 +333,172 @@ public class BasketViewModel : INotifyPropertyChanged
         RefreshCommands();
     }
 
-    public void ClearBasket()
+    //public void ClearBasket()
+    //{
+    //    Items.Clear();
+    //    ValidatedStocks.Clear();
+
+    //    if(string.IsNullOrEmpty(BasketNo))
+    //    {
+    //        ErrorMessage = "Sepet Seçiniz";
+    //        return;
+    //    }
+    //    else if(SelectedWhouse == null || string.IsNullOrEmpty(SelectedWhouse!.Code))
+    //    {
+    //        ErrorMessage = "Depo Seçiniz";
+    //        return;
+    //    }
+
+    //    var Task = ClearBasketAsync(BasketNo, SelectedWhouse!.Code);
+    //}
+
+    public async void ClearBasket()
     {
-        Items.Clear();
-        ValidatedStocks.Clear();
+        // ===============================
+        // ÖN KONTROLLER
+        // ===============================
 
-        if(string.IsNullOrEmpty(BasketNo))
+        if (string.IsNullOrEmpty(BasketNo))
         {
-            ErrorMessage = "Sepet Se�iniz";
-            return;
-        }
-        else if(SelectedWhouse == null || string.IsNullOrEmpty(SelectedWhouse!.Code))
-        {
-            ErrorMessage = "Depo Se�iniz";
+            await _dialog.ShowAlertAsync(
+                "Uyarı",
+                "Sepet seçiniz");
             return;
         }
 
-        var Task = ClearBasketAsync(BasketNo, SelectedWhouse!.Code);
+        if (SelectedWhouse == null || string.IsNullOrEmpty(SelectedWhouse.Code))
+        {
+            await _dialog.ShowAlertAsync(
+                "Uyarı",
+                "Depo seçiniz");
+            return;
+        }
+
+        try
+        {
+            // ===============================
+            // LOADING AÇ
+            // ===============================
+            _loading.Show("Sepet boşaltılıyor...");
+
+            // 🔴 kritik nokta
+            await Task.Yield();
+
+            var erpResult = await ClearBasketAsync(
+                BasketNo,
+                SelectedWhouse.Code);
+
+            if (erpResult == null)
+            {
+                await _dialog.ShowAlertAsync(
+                    "Hata",
+                    "ERP bağlantısı kurulamadı");
+                return;
+            }
+
+            if (!erpResult.Data)
+            {
+                await _dialog.ShowAlertAsync(
+                    "Hata",
+                    erpResult.Message ?? "Sepet boşaltılamadı");
+                return;
+            }
+
+            // ===============================
+            // BAŞARILI → UI TEMİZLE
+            // ===============================
+
+            Items.Clear();
+            ValidatedStocks.Clear();
+
+            await _dialog.ShowAlertAsync(
+                "Bilgi",
+                "Sepet boşaltma işlemi tamamlandı");
+        }
+        catch (Exception ex)
+        {
+            await _dialog.ShowAlertAsync(
+                "Hata",
+                ex.Message);
+        }
+        finally
+        {
+            // ===============================
+            // LOADING KAPAT (GARANTİ)
+            // ===============================
+            _loading.Hide();
+        }
     }
 
-    public async Task ClearBasketAsync(string basketCode, string whouseCode)
+    public async Task<ErpResult<bool>> ClearBasketAsync(
+    string basketCode,
+    string whouseCode)
     {
-        var erpResult = await _basketService
+        return await _basketService
             .ClearBasketDataAsync(basketCode, whouseCode);
-
-        if (erpResult?.Data == null)
-            return;
-
     }
+
+
+    //public async Task ClearBasketAsync(string basketCode, string whouseCode)
+    //{
+    //    var erpResult = await _basketService
+    //        .ClearBasketDataAsync(basketCode, whouseCode);
+
+    //    if (erpResult?.Data == null)
+    //        return;
+
+    //}
 
     public void DeleteBasket()
+    {
+       var delBasket = DeleteBasketAsync();
+    }
+
+    public async Task DeleteBasketAsync()
+    {
+        if (string.IsNullOrEmpty(BasketNo))
+        {
+            await _dialog.ShowAlertAsync("Uyarı", "Sepet seçiniz");
+            return;
+        }
+
+        var confirm = await _dialog.ShowConfirmAsync(
+            "Onay",
+            "Sepeti silmek istiyor musunuz?");
+
+        if (!confirm) return;
+
+        try
+        {
+            _loading.Show("Sepet siliniyor...");
+            await Task.Yield();
+
+            var erpResult =
+                await _basketService.DeleteBasketDataAsync(BasketNo);
+
+            if (erpResult == null || !erpResult.Data)
+            {
+                await _dialog.ShowAlertAsync(
+                    "Hata",
+                    erpResult?.Message ?? "Sepet silinemedi");
+                return;
+            }
+
+            ClearBasketUi();
+
+            await _dialog.ShowAlertAsync(
+                "Başarılı",
+                "İşlem tamamlandı");
+        }
+        finally
+        {
+            _loading.Hide();
+        }
+    }
+
+
+
+    private void ClearBasketUi()
     {
         Items.Clear();
         ValidatedStocks.Clear();
@@ -365,10 +510,15 @@ public class BasketViewModel : INotifyPropertyChanged
         RefreshCommands();
     }
 
+
+
+
     void RefreshCommands()
     {
         (ClearBasketCommand as Command)?.ChangeCanExecute();
         (DeleteBasketCommand as Command)?.ChangeCanExecute();
     }
+
+
 }
 
