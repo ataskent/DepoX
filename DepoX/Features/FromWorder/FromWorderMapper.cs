@@ -33,7 +33,13 @@ namespace DepoX.Features.FromWorder
             {
                 Code = dto.Code,
                 Quantity = dto.Quantity,
-                WhouseCode = dto.WhouseCode
+                WhouseCode = dto.WhouseCode,
+                LotCode = dto.LotCode,
+                ItemCode = dto.ItemCode,
+                ItemName = dto.ItemName,
+                UnitCode = dto.UnitCode,
+                ColorCode = dto.ColorCode
+
             };
         }
         public static ItemsVm ToModel(this Items dto)
@@ -42,7 +48,9 @@ namespace DepoX.Features.FromWorder
             {
                 Code = dto.Code,
                 Quantity = dto.Quantity,
-                WhouseCode = dto.WhouseCode
+                WhouseCode = dto.WhouseCode,
+                Name = dto.Name,
+                UnitCode = dto.UnitCode
             };
         }
 
@@ -60,13 +68,22 @@ namespace DepoX.Features.FromWorder
                 {
                     Code = b.Code,
                     Quantity = b.Quantity,
-                    WhouseCode = b.WhouseCode
+                    WhouseCode = b.WhouseCode,
+                    LotCode = b.LotCode,
+                    ItemCode = b.ItemCode,
+                    ItemName = b.ItemName,
+                    UnitCode = b.UnitCode,
+                    ColorCode = b.ColorCode
+
                 }).ToList(),
                 Items = vm.Items.Select(i => new Items
                 {
                     Code = i.Code,
                     Quantity = i.Quantity,
-                    WhouseCode = i.WhouseCode
+                    WhouseCode = i.WhouseCode,
+                    Name = i.Name,
+                    UnitCode = i.UnitCode
+
                 }).ToList()
             };
         }

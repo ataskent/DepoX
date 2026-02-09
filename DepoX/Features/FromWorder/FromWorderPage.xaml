@@ -188,7 +188,7 @@
             <!-- ========================= -->
             <!-- 4️⃣ SEPETTEKİ BARKODLAR -->
             <!-- ========================= -->
-            <Border
+            <!--<Border
     Grid.Row="2"
     Stroke="#CBD5E1"
     StrokeThickness="1"
@@ -206,7 +206,6 @@
             FontAttributes="Bold"
             TextColor="#0F172A" />
 
-                    <!-- İnce ayırıcı -->
                     <BoxView
             Grid.Row="1"
             HeightRequest="1"
@@ -240,7 +239,6 @@
                             FontAttributes="Bold"
                             TextColor="#0F172A" />
 
-                                    <!-- SATIR ALTI ÇİZGİ -->
                                     <BoxView
                             Grid.Row="1"
                             Grid.ColumnSpan="2"
@@ -256,6 +254,100 @@
                     </CollectionView>
 
                 </Grid>
+            </Border>-->
+
+            <Border
+        Grid.Row="2"
+        Stroke="#CBD5E1"
+        Background="White"
+        Padding="8"
+        StrokeShape="RoundRectangle 12">
+
+
+                <Grid RowDefinitions="Auto,Auto,*"
+      RowSpacing="0">
+
+                    <Label
+        Grid.Row="0"
+        Text="Barkodlar"
+        FontAttributes="Bold"
+        TextColor="#0F172A" />
+
+                    <BoxView
+         Grid.Row="1"
+         Margin="0,4"
+          HeightRequest="1"
+          BackgroundColor="#75777B"
+          Opacity="0.4" />
+
+                    <CollectionView
+            Grid.Row="2"
+            ItemsSource="{Binding Barcodes}"
+            SelectionMode="None">
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <SwipeView>
+
+                                    <SwipeView.LeftItems>
+                                        <SwipeItems Mode="Reveal">
+                                            <SwipeItem
+                                  Text="Sil"
+                                  BackgroundColor="Tomato"
+                                  Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RemoveItemCommand}"
+                                  CommandParameter="{Binding .}" />
+                                        </SwipeItems>
+                                    </SwipeView.LeftItems>
+                                    <Grid
+                        RowDefinitions="*,*,*,*,*"
+                        ColumnDefinitions="*"
+                        Padding="0">
+
+                                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Text="{Binding Code}"
+                            FontAttributes="Bold"
+                            TextColor="DarkRed" />
+
+
+                                        <Label 
+                            Grid.Row="1" 
+                            Text="{Binding ItemCode}"
+                               FontSize="12"
+                               TextColor="#0F172A" />
+                                        <!--<Label 
+                            Grid.Row="2" Grid.ColumnSpan="2"
+                            Text="{Binding ItemName}"
+                                FontSize="12"
+                                TextColor="#0F172A" />-->
+
+                                        <Label 
+                             Grid.Row="2" 
+                             Text="{Binding LineA}"
+                                FontSize="10"
+                                TextColor="#0F172A" />
+                                        <Label 
+                              Grid.Row="3" 
+                              Text="{Binding LineB}"
+                                 FontSize="10"
+                                 TextColor="#0F172A" />
+                                        <BoxView
+                             Grid.Row="4" 
+                             Margin="0,4"
+                              HeightRequest="1"
+                              BackgroundColor="#75777B"
+                              Opacity="0.4" />
+                                    </Grid>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                </Grid>
+
+        
             </Border>
 
 
@@ -263,6 +355,75 @@
             <!-- 3️⃣ ERP STOKLAR -->
             <!-- ========================= -->
             <Border
+       Grid.Row="3"
+       Stroke="#A7F3D0"
+       StrokeThickness="1"
+       Background="#F0FDF4"
+       Padding="8"
+       StrokeShape="RoundRectangle 12">
+
+                <Grid RowDefinitions="Auto,Auto,*"
+             RowSpacing="0">
+
+                    <Label
+       Grid.Row="0"
+       Text="Stoklar"
+       FontAttributes="Bold"
+       TextColor="#065F46" />
+
+                    <BoxView
+       Grid.Row="1"
+       Margin="0,4"
+        HeightRequest="1"
+        BackgroundColor="#75777B"
+        Opacity="0.4" />
+
+                    <CollectionView                        
+               Grid.Row="2"
+               ItemsSource="{Binding Items}"
+               VerticalOptions="Fill">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid
+               RowDefinitions="*,*,*,*"
+               ColumnDefinitions="*"
+               Padding="0">
+
+                                    <Label
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Text="{Binding Code}"
+                   FontAttributes="Bold"
+                   TextColor="#333333" />
+
+                                    <Label
+                     Grid.Row="1"
+                     Grid.Column="0"
+                     FontSize="10"
+                     Text="{Binding Name}"                                      
+                     TextColor="#333333" />
+
+                                    <Label
+                     Grid.Row="2"
+                     Grid.Column="1"
+                     Text="{Binding LineA}"
+                            FontSize="10"
+                            TextColor="#0F172A" />
+
+                                    <BoxView
+                    Grid.Row="3" 
+                    Margin="0,4"
+                     HeightRequest="1"
+                     BackgroundColor="#75777B"
+                     Opacity="0.4" />
+                                </Grid>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+            </Border>
+            <!--<Border
         Grid.Row="3"
         Stroke="#A7F3D0"
         StrokeThickness="1"
@@ -279,7 +440,6 @@
             FontAttributes="Bold"
             TextColor="#065F46" />
 
-                    <!-- İnce ayırıcı -->
                     <BoxView
             Grid.Row="1"
             HeightRequest="1"
@@ -294,13 +454,11 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
 
-                                <!-- SATIR -->
                                 <Grid
                         ColumnDefinitions="2*,Auto,5*,Auto,*"
                         RowDefinitions="Auto,Auto,Auto"
                         Padding="0">
 
-                                    <!-- Depo -->
                                     <Label
                             Grid.Row="0"
                             Grid.Column="0"
@@ -309,7 +467,6 @@
                             FontAttributes="Bold"
                             TextColor="#0F172A" />
 
-                                    <!-- Dikey çizgi -->
                                     <BoxView
                             Grid.Row="0"
                             Grid.RowSpan="2"
@@ -318,7 +475,6 @@
                             BackgroundColor="#E5E7EB"
                             Opacity="0.6" />
 
-                                    <!-- Stok Kodu -->
                                     <Label
                             Grid.Row="0"
                             Grid.Column="2"
@@ -327,7 +483,6 @@
                             FontAttributes="Bold"
                             TextColor="#0F172A" />
 
-                                    <!-- Dikey çizgi -->
                                     <BoxView
                             Grid.Row="0"
                             Grid.RowSpan="2"
@@ -336,7 +491,6 @@
                             BackgroundColor="#E5E7EB"
                             Opacity="0.6" />
 
-                                    <!-- Miktar -->
                                     <Label
                             Grid.Row="0"
                             Grid.Column="4"
@@ -345,7 +499,6 @@
                             HorizontalTextAlignment="End"
                             TextColor="#334155" />
 
-                                    <!-- SATIR ALTI ÇİZGİ -->
                                     <BoxView
                             Grid.Row="2"
                             Grid.ColumnSpan="5"
@@ -360,7 +513,7 @@
                     </CollectionView>
 
                 </Grid>
-            </Border>
+            </Border>-->
 
 
             <!--<Border

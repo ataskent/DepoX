@@ -26,6 +26,14 @@ public class BarcodeVm
     public string WhouseCode { get; set; } = "";
     public string Code { get; set; } = "";
     public decimal Quantity { get; set; }
+    public string LotCode { get; set; } = "";
+    public string ItemCode { get; set; } = "";
+    public string ItemName { get; set; } = "";
+    public string UnitCode { get; set; } = "";
+    public string ColorCode { get; set; } = "";
+
+    public string LineA => $"Parti: {LotCode} - Renk: {ColorCode}";
+    public string LineB => $"Miktar: {Quantity} {UnitCode} - Depo: {WhouseCode}";
 }
 
 public class ItemsVm
@@ -34,4 +42,6 @@ public class ItemsVm
     public string Name { get; set; } = "";
     public decimal Quantity { get; set; }
     public string WhouseCode { get; set; } = "";
+    public string UnitCode { get; set; } = "";
+    public string LineA => $"Miktar: {Quantity} {UnitCode} - Depo: {WhouseCode}";
 }

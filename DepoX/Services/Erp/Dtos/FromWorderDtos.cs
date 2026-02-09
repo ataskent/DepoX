@@ -32,12 +32,18 @@ public class Barcode
     public string WhouseCode { get; set; } = "";
     public string Code { get; set; } = "";
     public decimal Quantity { get; set; }
+   public string LotCode { get; set; } = "";
+    public string ItemCode { get; set; } = "";
+    public string ItemName { get; set; } = "";
+    public string UnitCode { get; set; } = "";
+    public string ColorCode { get; set; } = "";
 }
 
 public class Items
 {
     public string WhouseCode { get; set; } = "";
     public string Code { get; set; } = "";
+    public string UnitCode { get; set; } = "";
     public string Name { get; set; } = "";
     public decimal Quantity { get; set; }
 }

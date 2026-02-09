@@ -1,4 +1,5 @@
 ﻿using DepoX.Features.Basket;
+using DepoX.Services.Dialog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,8 @@ public class FromWorderViewModel : INotifyPropertyChanged
 {
 
     private readonly IFromWorderService _fromWorderService;
+    private readonly ILoadingService _loadingService;
+    private readonly IDialogService _dialogService;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     void OnPropertyChanged([CallerMemberName] string? name = null)
@@ -28,9 +31,11 @@ public class FromWorderViewModel : INotifyPropertyChanged
     public ICommand SaveTransferCommand { get; }
 
 
-    public FromWorderViewModel(IFromWorderService fromWorderService)
+    public FromWorderViewModel(IFromWorderService fromWorderService, ILoadingService loadingService, IDialogService dialogService)
     {
         _fromWorderService = fromWorderService;
+        _loadingService = loadingService;
+        _dialogService = dialogService;
 
         OpenTransferListCommand = new Command(OpenTransferList);
         OpenWhouseListCommand = new Command(OpenWhouseList);
@@ -47,6 +52,8 @@ public class FromWorderViewModel : INotifyPropertyChanged
         ErrorMessage = null;
         try
         {
+            _loadingService.Show("Transfer kayıt ediliyor...");
+            await Task.Yield();
             TransferDataVm transferDataVm = new TransferDataVm
             {
                 Transfer = SelectedTransfer!,
@@ -58,8 +65,11 @@ public class FromWorderViewModel : INotifyPropertyChanged
             if (!result.Success)
             {
                 ErrorMessage = result.Message;
+                await _dialogService.ShowAlertAsync("Hata", result.Message);
                 return;
             }
+
+            await _dialogService.ShowAlertAsync("Başarılı", "Transfer başarıyla kaydedildi.");
             // Başarılı kayıt sonrası işlemler
             Barcodes.Clear();
             Items.Clear();
@@ -72,10 +82,12 @@ public class FromWorderViewModel : INotifyPropertyChanged
         catch (Exception ex)
         {
             ErrorMessage = ex.Message;
+            await _dialogService.ShowAlertAsync("Hata", ex.Message);
         }
         finally
         {
             IsBusy = false;
+            _loadingService.Hide(); 
         }
     }
 
