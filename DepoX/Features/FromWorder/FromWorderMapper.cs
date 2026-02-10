@@ -48,6 +48,7 @@ namespace DepoX.Features.FromWorder
             {
                 Code = dto.Code,
                 Quantity = dto.Quantity,
+                Qty = dto.Qty,
                 WhouseCode = dto.WhouseCode,
                 Name = dto.Name,
                 UnitCode = dto.UnitCode

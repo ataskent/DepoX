@@ -46,4 +46,5 @@ public class Items
     public string UnitCode { get; set; } = "";
     public string Name { get; set; } = "";
     public decimal Quantity { get; set; }
+    public decimal Qty { get; set; }
 }

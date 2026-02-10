@@ -41,7 +41,8 @@ public class ItemsVm
     public string Code { get; set; } = "";
     public string Name { get; set; } = "";
     public decimal Quantity { get; set; }
+    public decimal Qty { get; set; }
     public string WhouseCode { get; set; } = "";
     public string UnitCode { get; set; } = "";
-    public string LineA => $"Miktar: {Quantity} {UnitCode} - Depo: {WhouseCode}";
+    public string LineA => $"Miktar: {Quantity} {UnitCode} - İşlenen Miktar: {Qty} {UnitCode}";
 }

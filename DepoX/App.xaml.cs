@@ -9,6 +9,7 @@ namespace DepoX
         public App(AppShell appShell)
         {
             InitializeComponent();
+            UserAppTheme = AppTheme.Light;
             _appShell = appShell;
         }
 

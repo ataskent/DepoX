@@ -63,21 +63,27 @@
 	  <AndroidResource Remove="Dtos\**" />
 	  <AndroidResource Remove="Models\Count\**" />
 	  <AndroidResource Remove="Services\NewFolder\**" />
+	  <AndroidResource Remove="ViewModels\**" />
 	  <Compile Remove="Dtos\**" />
 	  <Compile Remove="Models\Count\**" />
 	  <Compile Remove="Services\NewFolder\**" />
+	  <Compile Remove="ViewModels\**" />
 	  <EmbeddedResource Remove="Dtos\**" />
 	  <EmbeddedResource Remove="Models\Count\**" />
 	  <EmbeddedResource Remove="Services\NewFolder\**" />
+	  <EmbeddedResource Remove="ViewModels\**" />
 	  <MauiCss Remove="Dtos\**" />
 	  <MauiCss Remove="Models\Count\**" />
 	  <MauiCss Remove="Services\NewFolder\**" />
+	  <MauiCss Remove="ViewModels\**" />
 	  <MauiXaml Remove="Dtos\**" />
 	  <MauiXaml Remove="Models\Count\**" />
 	  <MauiXaml Remove="Services\NewFolder\**" />
+	  <MauiXaml Remove="ViewModels\**" />
 	  <None Remove="Dtos\**" />
 	  <None Remove="Models\Count\**" />
 	  <None Remove="Services\NewFolder\**" />
+	  <None Remove="ViewModels\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -154,7 +160,6 @@
 	<ItemGroup>
 	  <Folder Include="Helpers\" />
 	  <Folder Include="Models\" />
-	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 
 	<ItemGroup>
